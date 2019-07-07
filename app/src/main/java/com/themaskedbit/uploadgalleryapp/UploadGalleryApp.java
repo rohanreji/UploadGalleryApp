@@ -2,13 +2,9 @@ package com.themaskedbit.uploadgalleryapp;
 
 import android.app.Activity;
 import android.app.Application;
-import android.util.Log;
-
-import com.themaskedbit.uploadgalleryapp.gallery.Model.User;
 import com.themaskedbit.uploadgalleryapp.gallery.di.AppComponent;
 import com.themaskedbit.uploadgalleryapp.gallery.di.AppModule;
 import com.themaskedbit.uploadgalleryapp.gallery.di.DaggerAppComponent;
-import com.themaskedbit.uploadgalleryapp.gallery.presenter.SharedPreferencesHelper;
 
 import javax.inject.Inject;
 
