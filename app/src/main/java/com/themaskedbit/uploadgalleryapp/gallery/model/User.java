@@ -1,4 +1,4 @@
-package com.themaskedbit.uploadgalleryapp.gallery.Model;
+package com.themaskedbit.uploadgalleryapp.gallery.model;
 
 import com.themaskedbit.uploadgalleryapp.gallery.presenter.SharedPreferencesHelper;
 

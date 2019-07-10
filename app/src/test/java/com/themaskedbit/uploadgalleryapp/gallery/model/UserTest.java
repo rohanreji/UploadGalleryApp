@@ -1,6 +1,5 @@
 package com.themaskedbit.uploadgalleryapp.gallery.model;
 
-import com.themaskedbit.uploadgalleryapp.gallery.Model.User;
 import com.themaskedbit.uploadgalleryapp.gallery.presenter.SharedPreferencesHelper;
 
 import org.junit.Before;

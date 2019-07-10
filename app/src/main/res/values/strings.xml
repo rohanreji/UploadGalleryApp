@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">UploadGalleryApp</string>
     <string name="action_settings">Settings</string>
+    <string name="dialog_camera">Open Camera</string>
+    <string name="dialog_gallery">Open Gallery</string>
+    <string name="dialog_upload_title">Upload Image</string>
+    <string name="dialog_upload_message">Select source.</string>
+    <string name="camera_perm_error">Permission denied!</string>
+    <string name="temp_image_prefix">/temp-image</string>
+    <string name="temp_image_suffix">.jpg</string>
+    <string name="no_images">You haven\'t uploaded any images. Use the \'+\' icon below to start uploading.</string>
+    <string name="error_open_camera">Sorry! Unable to open camera</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -16,7 +16,7 @@ public class UploadGalleryApp extends Application implements HasActivityInjector
     @Inject
     DispatchingAndroidInjector<Activity> activityDispatchingAndroidInjector;
 
-    AppComponent appComponent;
+    public AppComponent appComponent;
 
     @Override
     public void onCreate() {
@@ -25,7 +25,7 @@ public class UploadGalleryApp extends Application implements HasActivityInjector
         appComponent.inject(this);
     }
 
-    private void initAppComponent() {
+    public void initAppComponent() {
         appComponent = DaggerAppComponent.builder()
                     .appModule(new AppModule(this))
                     .build();

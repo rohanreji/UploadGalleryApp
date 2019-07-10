@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".gallery.view.editor.ImageEditFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/boder_little_margin">
+
+            <ImageView
+                android:id="@+id/editor_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:src="@drawable/ic_check_black_24dp"
+                />
+            <LinearLayout
+                android:id="@+id/editor_rotate_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toLeftOf="parent"
+                app:layout_constraintLeft_toRightOf="parent">
+                <ImageView
+                    android:id="@+id/editor_rotate_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/boder_little_margin"
+                    android:src="@drawable/ic_rotate_left_black_24dp"/>
+                <ImageView
+                    android:id="@+id/editor_rotate_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_rotate_right_black_24dp"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/editor_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:src="@drawable/ic_close_black_24dp"
+                />
+
+            <com.isseiaoki.simplecropview.CropImageView
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/editor_cropview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintTop_toBottomOf="@id/editor_save"
+                android:layout_marginTop="@dimen/boder_little_margin"
+                custom:scv_crop_mode="fit_image"
+                custom:scv_frame_color="@color/colorAccent"
+                custom:scv_frame_stroke_weight="1dp"
+                custom:scv_guide_color="@color/colorAccent"
+                custom:scv_guide_show_mode="show_always"
+                custom:scv_guide_stroke_weight="1dp"
+                custom:scv_handle_color="@color/colorAccent"
+                custom:scv_handle_show_mode="show_always"
+                custom:scv_handle_size="14dp"
+                custom:scv_min_frame_size="50dp"
+                custom:scv_overlay_color="@color/overlay"
+                custom:scv_touch_padding="8dp"/>
+
+            <ProgressBar
+                android:id="@+id/editor_progressbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="parent"
+                app:layout_constraintLeft_toRightOf="parent"
+                android:foregroundGravity="center"
+                android:visibility="gone"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
+    </layout>

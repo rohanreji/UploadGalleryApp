@@ -3,7 +3,8 @@ package com.themaskedbit.uploadgalleryapp.gallery.di;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.themaskedbit.uploadgalleryapp.gallery.Model.User;
+import com.squareup.picasso.Picasso;
+import com.themaskedbit.uploadgalleryapp.gallery.model.User;
 import com.themaskedbit.uploadgalleryapp.UploadGalleryApp;
 import com.themaskedbit.uploadgalleryapp.gallery.presenter.SharedPreferencesHelper;
 import com.themaskedbit.uploadgalleryapp.gallery.presenter.SharedPreferencesHelperImpl;
@@ -43,6 +44,20 @@ public class AppModule {
     @Provides
     @Singleton
     User provideUser(SharedPreferencesHelper sharedPreferencesHelper){
+        return user(sharedPreferencesHelper);
+    }
+
+    User user(SharedPreferencesHelper sharedPreferencesHelper) {
         return new User(sharedPreferencesHelper);
+    }
+
+    @Provides
+    @Singleton
+    Picasso providePicasso(Context context) {
+        return picasso(context);
+    }
+
+    Picasso picasso(final Context context) {
+        return Picasso.with(context);
     }
 }
