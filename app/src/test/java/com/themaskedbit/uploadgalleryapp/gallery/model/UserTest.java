@@ -1,6 +1,6 @@
 package com.themaskedbit.uploadgalleryapp.gallery.model;
 
-import com.themaskedbit.uploadgalleryapp.gallery.presenter.SharedPreferencesHelper;
+import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,7 +19,7 @@ public class UserTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    SharedPreferencesHelper sharedPreferencesHelper;
+    SharedPreferencesManager sharedPreferencesManager;
 
     @Before
     public void setUp() throws Exception {
@@ -28,16 +28,16 @@ public class UserTest {
 
     @Test
     public void firstTimeUserSetupTest() {
-        Mockito.when(sharedPreferencesHelper.getUserId()).thenReturn(null);
-        User user1 = new User(sharedPreferencesHelper);
-        User user2 = new User(sharedPreferencesHelper);
+        Mockito.when(sharedPreferencesManager.getUserId()).thenReturn(null);
+        User user1 = new User(sharedPreferencesManager);
+        User user2 = new User(sharedPreferencesManager);
         assertEquals(user1.getId(),user2.getId());
     }
 
     @Test
     public void alreadyInitiatedUserSetupTest() {
-        Mockito.when(sharedPreferencesHelper.getUserId()).thenReturn("0xtest");
-        User user = new User(sharedPreferencesHelper);
+        Mockito.when(sharedPreferencesManager.getUserId()).thenReturn("0xtest");
+        User user = new User(sharedPreferencesManager);
         assertEquals(user.getId(),"0xtest");
     }
 

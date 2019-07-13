@@ -1,5 +1,5 @@
 ext {
-    minSdkVersion = 15
+    minSdkVersion = 16
     targetSdkVersion = 28
     compileSdkVersion = 28
     expressoVersion = "3.2.0"

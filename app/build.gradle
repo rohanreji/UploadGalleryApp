@@ -16,6 +16,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions{
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE-FIREBASE.txt'
+        exclude 'META-INF/NOTICE'
+
+    }
     dataBinding {
         enabled = true
     }
@@ -57,4 +63,10 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
     implementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
+
+    implementation 'com.google.firebase:firebase-storage:18.0.0'
+    implementation 'com.google.firebase:firebase-database:18.0.0'
+
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta01'
 }
+apply plugin: 'com.google.gms.google-services'

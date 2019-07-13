@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "619156540105",
+    "firebase_url": "https://uploadgalleryapp.firebaseio.com",
+    "project_id": "uploadgalleryapp",
+    "storage_bucket": "uploadgalleryapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619156540105:android:754d29a0eae8022f",
+        "android_client_info": {
+          "package_name": "com.themaskedbit.uploadgalleryapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619156540105-uaf4tbsd61s89252oso47psl2vklo9fc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDS7CBTPDAYAhsi74F_DChdWgTglS9EVI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619156540105-uaf4tbsd61s89252oso47psl2vklo9fc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,14 +1,14 @@
 package com.themaskedbit.uploadgalleryapp.gallery.model;
 
-import com.themaskedbit.uploadgalleryapp.gallery.presenter.SharedPreferencesHelper;
+import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
 
 public class TestUser extends User {
 
     private static String test;
     private String id;
 
-    public TestUser(SharedPreferencesHelper sharedPreferencesHelper) {
-        super(sharedPreferencesHelper);
+    public TestUser(SharedPreferencesManager sharedPreferencesManager) {
+        super(sharedPreferencesManager);
         id="0x1";
     }
 

@@ -1,4 +1,4 @@
-package com.themaskedbit.uploadgalleryapp.gallery.presenter;
+package com.themaskedbit.uploadgalleryapp.gallery.manager;
 
 import android.content.SharedPreferences;
 
@@ -28,15 +28,15 @@ public class SharedPreferenceHelperTest {
 
     @Test
     public void idWithoutInitializingTest() {
-        Mockito.when(sharedPreferences.getString(SharedPreferencesHelperImpl.ID_KEY, null)).thenReturn(null);
-        SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelperImpl(sharedPreferences);
-        assertEquals(null,sharedPreferencesHelper.getUserId());
+        Mockito.when(sharedPreferences.getString(SharedPreferencesManagerImpl.ID_KEY, null)).thenReturn(null);
+        SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManagerImpl(sharedPreferences);
+        assertEquals(null, sharedPreferencesManager.getUserId());
     }
 
     @Test
     public void idAfterInitializingTest() {
-        Mockito.when(sharedPreferences.getString(SharedPreferencesHelperImpl.ID_KEY, null)).thenReturn("0xtest");
-        SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelperImpl(sharedPreferences);
-        assertEquals("0xtest",sharedPreferencesHelper.getUserId());
+        Mockito.when(sharedPreferences.getString(SharedPreferencesManagerImpl.ID_KEY, null)).thenReturn("0xtest");
+        SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManagerImpl(sharedPreferences);
+        assertEquals("0xtest", sharedPreferencesManager.getUserId());
     }
 }

@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -19,9 +19,13 @@ import com.themaskedbit.uploadgalleryapp.BuildConfig;
 import com.themaskedbit.uploadgalleryapp.R;
 import com.themaskedbit.uploadgalleryapp.databinding.ActivityMainBinding;
 import com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper;
-import com.themaskedbit.uploadgalleryapp.gallery.presenter.SharedPreferencesHelper;
+import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
+import com.themaskedbit.uploadgalleryapp.gallery.manager.ViewManager;
+import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
 import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
 import com.themaskedbit.uploadgalleryapp.gallery.view.editor.ImageEditFragment;
+import com.themaskedbit.uploadgalleryapp.gallery.view.gallery.Gallery;
+import com.themaskedbit.uploadgalleryapp.gallery.view.gallery.GalleryAdapter;
 import com.themaskedbit.uploadgalleryapp.gallery.view.util.DialogBuilder;
 
 import androidx.annotation.NonNull;
@@ -36,7 +40,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.test.espresso.IdlingResource;
 
-import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -44,6 +48,9 @@ import dagger.android.AndroidInjection;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
+
+import static com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper.deleteCacheFile;
+import static com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper.getCacheFile;
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector, MainActivityInterface {
     public static final int PERMISSION_REQUEST_CAMERA = 100;
@@ -60,13 +67,21 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     DialogBuilder dialogBuilder;
 
     @Inject
-    SharedPreferencesHelper sharedPreferencesHelper;
+    SharedPreferencesManager sharedPreferencesManager;
 
     @Inject
     DispatchingAndroidInjector<Fragment> fragmentInjector;
 
+    @Inject
+    ViewManager viewManager;
+
+    @Inject
+    GalleryAdapter galleryAdapter;
+
+
     @Nullable
     private IdlingResourceApp idlingResource;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         fab = dataBinding.fab;
         progressBar = dataBinding.layoutGallery.progress;
         context = this;
+        viewManager.setView(this);
+        viewManager.start(idlingResource);
         //click handler for fab button
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
             }
         });
+
     }
     private void openGallery() {
 
@@ -125,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             openCameraIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             Uri uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID,
-                    FileHelper.getCacheFile(this));
+                    getCacheFile(this));
             openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             if (openCameraIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(openCameraIntent, REQUEST_IMAGE_CAPTURE);
@@ -140,13 +158,14 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         showProgress(false);
         showFabButton(false);
 
-        ImageEditFragment imageEditFragment = ImageEditFragment.newInstance();
+        ImageEditFragment imageEditFragment = new ImageEditFragment();
         FragmentTransaction transaction =
                 getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.editor_fragment, imageEditFragment, IMAGE_EDITOR);
         transaction.addToBackStack(IMAGE_EDITOR);
         transaction.commit();
         //TODO: set editor listener of fragment here. Need to have an implementation of Listener.
+        imageEditFragment.setEditorListener(idlingResource, viewManager);
     }
 
     private void showProgress(boolean show) {
@@ -183,8 +202,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
-                sharedPreferencesHelper.setImageUri(
-                        Uri.fromFile(FileHelper.getCacheFile(getApplicationContext())));
+                sharedPreferencesManager.setImageUri(Uri.fromFile(getCacheFile(this)));
+                Log.d("TAG",Uri.fromFile(getCacheFile(getApplicationContext())).toString());
                 //add the image editor here
                 inflateEditor();
             }
@@ -207,9 +226,92 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     @Override
+    public void onFetchImagesStarted() {
+        showProgress(true);
+    }
+
+    @Override
+    public void onFetchImageDone(List<Image> imageList) {
+        showProgress(false);
+        if (imageList.isEmpty()) {
+            //TODO: show the empty texy
+        } else {
+            showGallery();
+            galleryAdapter.setImages(imageList);
+            galleryAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void showGallery() {
+        final Fragment fragmentByTag = findGallery();
+        Gallery fragment;
+        if (fragmentByTag == null) {
+            fragment = new Gallery();
+            FragmentTransaction transaction =
+                    getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.images_fragment, fragment, GALLERY);
+            transaction.commit();
+            fragment.setAdapter(galleryAdapter);
+        } else {
+            fragment = (Gallery) fragmentByTag;
+        }
+    }
+
+    private Fragment findGallery() {
+        return getSupportFragmentManager().findFragmentByTag(GALLERY);
+    }
+
+    @Override
+    public void onFetchImagesError(Exception e) {
+        showProgress(false);
+        //TODO: showStubText();
+        showError(e);
+    }
+
+    @Override
     public void onEditorClosed() {
         getSupportFragmentManager().popBackStack();
         showProgress(false);
         showFabButton(true);
     }
+
+    @Override
+    public void onUploadImageError(Exception e) {
+        onEditorClosed();
+        showError(e);
+    }
+
+    @Override
+    public void onUploadImageCompleted(Image image) {
+        onEditorClosed();
+        //Add image to adpater and show fragment.
+        galleryAdapter.addImage(image);
+        galleryAdapter.notifyDataSetChanged();
+        //deleteCacheFile(this);
+        showGallery();
+    }
+
+    @Override
+    public void onUploadImageStarted() {
+        showProgress(true);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        showFabButton(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        viewManager.setView(null);
+        viewManager.stop();
+    }
+
+    private void showError(final Exception e) {
+        dialogBuilder.showDialog(IMAGE_EDITOR, this, R.string.dialog_connect_error,
+                R.string.dialog_connect_error_message, android.R.string.ok, null, 0, null);
+    }
+
 }

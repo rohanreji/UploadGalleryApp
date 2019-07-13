@@ -16,8 +16,8 @@ public interface ImageEditFragmentInterface {
                                 EditorListener listener);
 
     interface EditorListener {
-        void onEditorCropped(@Nullable final IdlingResourceApp idlingResource,
-                                  File file, Single<Bitmap> cropping);
+        void onEditorSaved(@Nullable final IdlingResourceApp idlingResource,
+                                  File file, Bitmap cropping);
 
         void onEditorClosed();
     }

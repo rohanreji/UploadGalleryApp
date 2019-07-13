@@ -1,15 +1,15 @@
 package com.themaskedbit.uploadgalleryapp.gallery.model;
 
-import com.themaskedbit.uploadgalleryapp.gallery.presenter.SharedPreferencesHelper;
+import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
 
 public class User {
     private String id;
-    public User(SharedPreferencesHelper sharedPreferencesHelper) {
-        id = sharedPreferencesHelper.getUserId();
+    public User(SharedPreferencesManager sharedPreferencesManager) {
+        id = sharedPreferencesManager.getUserId();
         if (id == null) {
             //right now hard coding the id.
             id = "0x1";
-            sharedPreferencesHelper.setUserId(id);
+            sharedPreferencesManager.setUserId(id);
         }
     }
 

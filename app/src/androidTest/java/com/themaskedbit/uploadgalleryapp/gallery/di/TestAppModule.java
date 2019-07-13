@@ -5,11 +5,7 @@ import androidx.annotation.NonNull;
 import com.themaskedbit.uploadgalleryapp.UploadGalleryApp;
 import com.themaskedbit.uploadgalleryapp.gallery.model.TestUser;
 import com.themaskedbit.uploadgalleryapp.gallery.model.User;
-import com.themaskedbit.uploadgalleryapp.gallery.presenter.SharedPreferencesHelper;
-
-import javax.inject.Singleton;
-
-import dagger.Provides;
+import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
 
 public class TestAppModule extends AppModule {
     public TestAppModule(UploadGalleryApp app) {
@@ -18,7 +14,7 @@ public class TestAppModule extends AppModule {
 
     @NonNull
     @Override
-    User user(SharedPreferencesHelper sharedPreferencesHelper) {
-        return new TestUser(sharedPreferencesHelper);
+    User user(SharedPreferencesManager sharedPreferencesManager) {
+        return new TestUser(sharedPreferencesManager);
     }
 }
