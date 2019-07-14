@@ -17,6 +17,15 @@ public class Image{
         this.imageURL= url;
     }
 
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
     public String getImageName() {
         return imageName;
     }

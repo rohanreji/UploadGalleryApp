@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.test.espresso.IdlingResource;
@@ -17,11 +18,16 @@ import android.view.ViewGroup;
 
 import com.isseiaoki.simplecropview.CropImageView;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.themaskedbit.uploadgalleryapp.BuildConfig;
 import com.themaskedbit.uploadgalleryapp.R;
 import com.themaskedbit.uploadgalleryapp.databinding.FragmentImageEditBinding;
+import com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
 import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
+import com.themaskedbit.uploadgalleryapp.gallery.view.MainActivity;
 
 import javax.inject.Inject;
 
@@ -63,8 +69,9 @@ public class ImageEditFragment extends Fragment implements ImageEditFragmentInte
         binding.editorCropview.setCropMode(CropImageView.CropMode.FREE);
         IdlingResourceApp.set(idlingResource, true);
         binding.editorProgressbar.setVisibility(View.VISIBLE);
-        Log.d("TAG",sharedPreferencesManager.getImageUri().toString());
         picasso.load(sharedPreferencesManager.getImageUri())
+                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                 .placeholder(R.drawable.ic_insert_photo_black_24dp)
                 .resize(800, 800)
                 .centerInside()
@@ -104,10 +111,9 @@ public class ImageEditFragment extends Fragment implements ImageEditFragmentInte
     }
 
     public void save() {
-        IdlingResourceApp.set(idlingResource, true);
         binding.editorProgressbar.setVisibility(View.VISIBLE);
         manipulateControls(false);
-        close();
+        //close();
         listener.onEditorSaved(idlingResource, getCacheFile(getContext()),binding.editorCropview.getCroppedBitmap());
     }
 

@@ -40,6 +40,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.test.espresso.IdlingResource;
 
+import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -81,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Nullable
     private IdlingResourceApp idlingResource;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,8 +142,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         } else {
             Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             openCameraIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            Uri uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID,
-                    getCacheFile(this));
+            Uri uri = FileProvider.getUriForFile(this, getApplication().getPackageName(),
+                    FileHelper.getCacheFile(this));
             openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             if (openCameraIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(openCameraIntent, REQUEST_IMAGE_CAPTURE);
@@ -202,9 +202,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
-                sharedPreferencesManager.setImageUri(Uri.fromFile(getCacheFile(this)));
-                Log.d("TAG",Uri.fromFile(getCacheFile(getApplicationContext())).toString());
-                //add the image editor here
+                File file = FileHelper.getCacheFile(getApplicationContext());
+                sharedPreferencesManager.setImageUri(FileProvider.getUriForFile(this, getApplication().getPackageName(), file));
                 inflateEditor();
             }
         }
@@ -232,14 +231,17 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onFetchImageDone(List<Image> imageList) {
-        showProgress(false);
         if (imageList.isEmpty()) {
-            //TODO: show the empty texy
+            //TODO: show the empty text
         } else {
             showGallery();
-            galleryAdapter.setImages(imageList);
             galleryAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onFetchImageOver() {
+        showProgress(false);
     }
 
     private void showGallery() {
@@ -278,23 +280,24 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Override
     public void onUploadImageError(Exception e) {
         onEditorClosed();
+        deleteCacheFile(this);
         showError(e);
+        showGallery();
     }
 
     @Override
     public void onUploadImageCompleted(Image image) {
         onEditorClosed();
-        //Add image to adpater and show fragment.
-        galleryAdapter.addImage(image);
-        galleryAdapter.notifyDataSetChanged();
-        //deleteCacheFile(this);
+        deleteCacheFile(this);
         showGallery();
     }
 
     @Override
     public void onUploadImageStarted() {
         showProgress(true);
+        showFabButton(false);
     }
+
 
     @Override
     public void onBackPressed() {

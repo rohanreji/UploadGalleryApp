@@ -7,6 +7,10 @@ import java.util.List;
 public class ImageList {
     ArrayList<Image> images;
 
+    public ImageList(){
+        images=new ArrayList<>();
+    }
+
     public ArrayList<Image> getImages() {
         return images;
     }
@@ -18,6 +22,9 @@ public class ImageList {
         this.images.addAll(images);
     }
 
+    public void clear(){
+        images.clear();
+    }
     public void setImages(Image... images) {
         if (this.images == null) {
             this.images = new ArrayList<>();

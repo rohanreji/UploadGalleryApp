@@ -3,7 +3,13 @@ package com.themaskedbit.uploadgalleryapp.gallery.di;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+import com.themaskedbit.uploadgalleryapp.gallery.api.ApiHelper;
+import com.themaskedbit.uploadgalleryapp.gallery.api.FirebaseApi;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManagerImpl;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.ViewManager;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.ViewManagerImpl;
@@ -68,21 +74,47 @@ public class AppModule {
         return Picasso.with(context);
     }
 
-
-    @Provides
-    @Singleton
-    ViewManager provideViewManager(User user, ImageList imageList) {
-        return new ViewManagerImpl(user, Schedulers.io(), AndroidSchedulers.mainThread(), imageList);
-    }
-
-    @Provides
-    GalleryAdapter provideGalleryAdapter(Picasso picasso) {
-        return new GalleryAdapter(picasso);
-    }
-
     @Provides
     @Singleton
     ImageList provideImageList() {
         return new ImageList();
     }
+
+    @Provides
+    @Singleton
+    FirebaseDatabase provideFirebasDatabase() {
+        return FirebaseDatabase.getInstance();
+    }
+    @Provides
+    @Singleton
+    DatabaseReference provideDatabaseReference(User user) {
+        return FirebaseDatabase.getInstance().getReference().child("images").child(user.getId());
+    }
+
+    @Provides
+    @Singleton
+    StorageReference provideStorageReference(User user) {
+        return FirebaseStorage.getInstance().getReference().child("images").child(user.getId());
+    }
+
+    @Provides
+    @Singleton
+    ApiHelper provideApiHelper(StorageReference storageReference, DatabaseReference databaseReference, FirebaseDatabase firebaseDatabase, ImageList imageList) {
+        return new FirebaseApi(storageReference,databaseReference, firebaseDatabase, imageList);
+    }
+
+    @Provides
+    @Singleton
+    ViewManager provideViewManager(ApiHelper apiHelper) {
+        return new ViewManagerImpl(apiHelper);
+    }
+
+
+
+    @Provides
+    GalleryAdapter provideGalleryAdapter(Picasso picasso, ImageList imageList) {
+        return new GalleryAdapter(picasso, imageList);
+    }
+
+
 }

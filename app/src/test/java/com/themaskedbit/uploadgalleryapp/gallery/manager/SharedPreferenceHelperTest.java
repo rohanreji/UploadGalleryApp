@@ -39,4 +39,18 @@ public class SharedPreferenceHelperTest {
         SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManagerImpl(sharedPreferences);
         assertEquals("0xtest", sharedPreferencesManager.getUserId());
     }
+
+    @Test
+    public void uriWithoutInitializingTest() {
+        Mockito.when(sharedPreferences.getString(SharedPreferencesManagerImpl.IMG_URI, null)).thenReturn(null);
+        SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManagerImpl(sharedPreferences);
+        assertEquals(null, sharedPreferencesManager.getImageUri());
+    }
+
+    @Test
+    public void uriAfterInitializingTest() {
+        Mockito.when(sharedPreferences.getString(SharedPreferencesManagerImpl.IMG_URI, null)).thenReturn("content://test");
+        SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManagerImpl(sharedPreferences);
+        assertEquals("content://test", sharedPreferencesManager.getUserId());
+    }
 }

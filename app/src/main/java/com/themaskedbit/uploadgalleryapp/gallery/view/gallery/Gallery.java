@@ -39,13 +39,13 @@ public class Gallery extends Fragment implements GalleryInterface{
     }
     @Override
     public void setImages(List<Image> images) {
-        adapter.setImages(images);
+        //adapter.setImages(images);
         adapter.notifyDataSetChanged();
     }
 
     @Override
     public void addImage(Image image) {
-        adapter.addImage(image);
+        //adapter.addImage(image);
         adapter.notifyDataSetChanged();
     }
 }

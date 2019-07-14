@@ -1,10 +1,13 @@
 package com.themaskedbit.uploadgalleryapp.gallery.helper;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.themaskedbit.uploadgalleryapp.R;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 public class FileHelper {
     public static File getCacheFile(final Context context) {
@@ -34,4 +37,24 @@ public class FileHelper {
         boolean result = file.delete();
         return file.delete();
     }
+
+    public static File saveBitmap(final File file, final Bitmap bitmap) {
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return file;
+    }
+
 }

@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import com.themaskedbit.uploadgalleryapp.R;
 import com.themaskedbit.uploadgalleryapp.databinding.GalleryCellBinding;
 import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
+import com.themaskedbit.uploadgalleryapp.gallery.model.ImageList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,16 +25,15 @@ import java.util.List;
  * Adapter for the gallery of uploaded images.
  */
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
-    private List<Image> images;
+    private ImageList imageList;
     private Picasso picasso;
 
-    public GalleryAdapter(Picasso picasso) {
+    public GalleryAdapter(Picasso picasso, ImageList imageList) {
         super();
-
+        this.imageList = imageList;
         this.picasso = picasso;
         picasso.setLoggingEnabled(true);
         //TODO: can we reuse ImageList
-        images = new ArrayList<Image>();
 //        images = new SortedList<>(Image.class,
 //                new SortedList.Callback<Image>() {
 //                    @Override
@@ -70,19 +70,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 //                });
     }
 
-    /**
-     * Adds new images to the adapter.
-     *
-     * @param pics images to add
-     */
-    public void setImages(List<Image> pics) {
-        this.images.addAll(pics);
-    }
-
-    public void addImage(Image image) {
-        this.images.add(image);
-    }
-
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         LayoutInflater layoutInflater =
@@ -95,7 +82,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        Image image = images.get(position);
+        Image image = imageList.getImages().get(position);
         picasso.load(image.getImageURL())
                 .placeholder(R.drawable.ic_insert_photo_black_24dp)
                 .resize(800, 800)
@@ -105,7 +92,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return images.size();
+        return imageList.getImages().size();
     }
 
     /**
