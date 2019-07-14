@@ -44,15 +44,16 @@ public class FirebaseApi implements ApiHelper {
     }
 
     @Override
-    public void uploadImages(Uri uri, final File file, final IdlingResourceApp idlingResource) {
-        final StorageReference imageStorageRef =  storageReference.child(System.currentTimeMillis()+".jpg" );
+    public void uploadImages(Uri uri, final File file, final IdlingResourceApp idlingResource, String name) {
+        final StorageReference imageStorageRef =  storageReference.child(name);
         //Firebase will do the upload off the main thread.
         IdlingResourceApp.set(idlingResource, true);
         uploadTask = imageStorageRef.putFile(uri);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                imageStorageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                Task<Uri> imageUri = imageStorageRef.getDownloadUrl();
+                imageUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
 
@@ -116,8 +117,8 @@ public class FirebaseApi implements ApiHelper {
     }
 
     private void pushToFirebaseDb(final Image image, final IdlingResourceApp idlingResource){
-
-        pushToDbTask =databaseReference.push().setValue(image);
+        DatabaseReference pushReference = databaseReference.push();
+        pushToDbTask = pushReference.setValue(image);
         pushToDbTask.addOnSuccessListener(new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {

@@ -33,7 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-public class ViewManagerSuccessTest {
+public class ViewManagerTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -56,21 +56,14 @@ public class ViewManagerSuccessTest {
     @Mock
     IdlingResourceApp idlingResource;
 
-    @Mock
-    ImageList imageList;
 
 
     ViewManager viewManager;
 
 
-
-    private String userId="0x1";
-    private Image image = new Image("lorem","https://picsum.photos/id/237/200/300");
-
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
-//        when(this.user.getId()).thenReturn(userId);
         viewManager = new ViewManagerImpl(apiHelper);
         viewManager.setView(view);
     }
@@ -88,7 +81,9 @@ public class ViewManagerSuccessTest {
 
         viewManager.onEditorSaved(idlingResource,file, bitmap);
         InOrder inOrder = Mockito.inOrder(apiHelper);
-        inOrder.verify(apiHelper, times(1)).uploadImages(Uri.fromFile(file), file, idlingResource);
+        inOrder.verify(apiHelper, times(1)).uploadImages(Uri.fromFile(file), file, idlingResource,"test_image");
     }
+
+
 
 }

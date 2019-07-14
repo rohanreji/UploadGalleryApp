@@ -10,7 +10,7 @@ import java.io.File;
 
 public interface ApiHelper {
     void setPresenter(ViewManager manager);
-    void uploadImages(Uri uri, File file, IdlingResourceApp idlingResource);
+    void uploadImages(Uri uri, File file, IdlingResourceApp idlingResource, String name);
     void downloadImages(IdlingResourceApp idlingResource);
     void cancelUpload();
     void cancelDownload();

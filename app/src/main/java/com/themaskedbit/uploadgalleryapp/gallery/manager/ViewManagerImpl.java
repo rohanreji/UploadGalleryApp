@@ -60,7 +60,7 @@ public class ViewManagerImpl implements ViewManager {
         view.onUploadImageStarted();
         File imageFile = FileHelper.saveBitmap(file, cropping);
         final Uri uri = Uri.fromFile(imageFile);
-        apiHelper.uploadImages(uri,imageFile,idlingResource);
+        apiHelper.uploadImages(uri,imageFile,idlingResource, System.currentTimeMillis()+".jpg");
     }
 
     @Override
