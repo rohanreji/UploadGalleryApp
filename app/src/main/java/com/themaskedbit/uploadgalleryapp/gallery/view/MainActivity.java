@@ -272,7 +272,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onEditorClosed() {
-        getSupportFragmentManager().popBackStack();
+        FragmentTransaction transaction = getSupportFragmentManager().findFragmentByTag(IMAGE_EDITOR).getFragmentManager().beginTransaction();
+        transaction.remove(getSupportFragmentManager().findFragmentByTag(IMAGE_EDITOR));
+        transaction.commit();
         showProgress(false);
         showFabButton(true);
     }

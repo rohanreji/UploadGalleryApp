@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.IdlingRegistry;
@@ -24,6 +25,7 @@ import androidx.test.rule.ActivityTestRule;
 import com.themaskedbit.uploadgalleryapp.R;
 
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,9 +34,11 @@ import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.isInternal;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -45,8 +49,10 @@ import static org.hamcrest.CoreMatchers.not;
 @RunWith(AndroidJUnit4.class)
 public class FabButtonClickTest {
     private IdlingResource idlingResource;
+
     @Rule
     public IntentsTestRule<MainActivity> intentsRule = new IntentsTestRule<>(MainActivity.class);
+
 
     @Before
     public void stubIntents() {
@@ -97,6 +103,17 @@ public class FabButtonClickTest {
         onView(withText(R.string.dialog_camera)).perform(click());
         onView(withId(R.id.editor_close)).check(matches(isDisplayed()));
         onView(withId(R.id.editor_cropview)).check(matches(hasDrawable()));
+    }
+
+    @Test
+    public void
+    testEditorDialogCancel() {
+        onView(withId(R.id.fab)).perform(click());
+        onView(withText(R.string.dialog_upload_message)).check(matches(isDisplayed()));
+        onView(withText(R.string.dialog_camera)).perform(click());
+        onView(withId(R.id.editor_close)).check(matches(isDisplayed()));
+        onView(withId(R.id.editor_close)).perform(click());
+        onView(withId(R.id.images_fragment)).check(matches(isDisplayed()));
     }
 
     @After

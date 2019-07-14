@@ -67,7 +67,7 @@ public class ImageEditFragment extends Fragment implements ImageEditFragmentInte
                 inflater, R.layout.fragment_image_edit, container, false);
         binding.setEditor(this);
         binding.editorCropview.setCropMode(CropImageView.CropMode.FREE);
-        IdlingResourceApp.set(idlingResource, true);
+        IdlingResourceApp.set(idlingResource, false);
         binding.editorProgressbar.setVisibility(View.VISIBLE);
         picasso.load(sharedPreferencesManager.getImageUri())
                 .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
@@ -79,12 +79,12 @@ public class ImageEditFragment extends Fragment implements ImageEditFragmentInte
                     @Override
                     public void onSuccess() {
                         binding.editorProgressbar.setVisibility(View.GONE);
-                        IdlingResourceApp.set(idlingResource, false);
+                        IdlingResourceApp.set(idlingResource, true);
                     }
                     @Override
                     public void onError() {
                         binding.editorProgressbar.setVisibility(View.GONE);
-                        IdlingResourceApp.set(idlingResource, false);
+                        IdlingResourceApp.set(idlingResource, true);
                     }
                 });
         View view = binding.getRoot();
