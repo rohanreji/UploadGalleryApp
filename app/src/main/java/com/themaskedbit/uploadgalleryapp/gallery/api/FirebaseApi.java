@@ -84,13 +84,15 @@ public class FirebaseApi implements ApiHelper {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 imageList.clear();
+                viewManager.fetchDone(imageList.getImages());
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
 
                     Image image = postSnapshot.getValue(Image.class);
                     imageList.setImages(image);
-                    viewManager.fetchDone(imageList.getImages());
+
                 }
-                viewManager.fetchComplete();
+                viewManager.fetchDone(imageList.getImages());
+                //viewManager.fetchComplete();
                 IdlingResourceApp.set(idlingResource, true);
             }
 

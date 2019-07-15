@@ -9,7 +9,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
+/*
+ * File helper class
+ */
 public class FileHelper {
+
     public static File getCacheFile(final Context context) {
         String prefix = context.getResources().getString(R.string.temp_image_prefix);
         String suffix = context.getResources().getString(R.string.temp_image_suffix);

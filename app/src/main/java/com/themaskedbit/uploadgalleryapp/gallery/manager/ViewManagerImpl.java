@@ -102,6 +102,7 @@ public class ViewManagerImpl implements ViewManager {
         view.onFetchImageOver();
     }
 
+
     @Override
     public void fetchError(Exception e) {
         view.onFetchImagesError(e);

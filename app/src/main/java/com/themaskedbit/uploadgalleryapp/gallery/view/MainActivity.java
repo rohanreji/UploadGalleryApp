@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     private void showProgress(boolean show) {
-        progressBar.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     private void showFabButton(boolean show) {
@@ -258,11 +258,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onFetchImagesStarted() {
-        showProgress(true);
+       showProgress(true);
     }
 
     @Override
     public void onFetchImageDone(List<Image> imageList) {
+        showProgress(false);
         if (imageList.isEmpty()) {
             //TODO: show the empty text
         } else {
@@ -270,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             galleryAdapter.notifyDataSetChanged();
         }
     }
+
 
     @Override
     public void onFetchImageOver() {
@@ -295,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     private Fragment findGallery() {
-        return fragmentManager.findFragmentByTag(GALLERY);
+        return fragmentManager.findFragmentById(R.id.gallery_rv);
     }
 
     @Override

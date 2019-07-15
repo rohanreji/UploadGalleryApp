@@ -8,7 +8,7 @@ public class User {
         id = sharedPreferencesManager.getUserId();
         if (id == null) {
             //right now hard coding the id.
-            id = "0x1";
+            id = "0x2";
             sharedPreferencesManager.setUserId(id);
         }
     }
