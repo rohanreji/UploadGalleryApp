@@ -57,6 +57,8 @@ import static com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper.getCac
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector, MainActivityInterface {
     public static final int PERMISSION_REQUEST_CAMERA = 100;
     public static final int REQUEST_IMAGE_CAPTURE = 101;
+    public static final int PERMISSION_REQUEST_GALLERY = 102;
+    public static final int REQUEST_IMAGE_GALLERY = 103;
     public static final String GALLERY = "ADD PIC";
     public static final String IMAGE_EDITOR = "EDITOR";
 
@@ -134,7 +136,19 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     }
     private void openGallery() {
-
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    PERMISSION_REQUEST_GALLERY);
+        } else {
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            if (galleryIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
+            }
+        }
     }
 
     private void openCamera() {
@@ -197,6 +211,15 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 }
                 break;
             }
+            case PERMISSION_REQUEST_GALLERY: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openGallery();
+                } else {
+                    Snackbar.make(fab, R.string.camera_perm_error, Snackbar.LENGTH_INDEFINITE).show();
+                }
+                break;
+            }
 
         }
     }
@@ -209,6 +232,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
                 File file = FileHelper.getCacheFile(getApplicationContext());
                 sharedPreferencesManager.setImageUri(FileProvider.getUriForFile(this, getApplication().getPackageName(), file));
+                inflateEditor();
+            }else if (requestCode == REQUEST_IMAGE_GALLERY) {
+                final Uri imageUri = data.getData();
+                sharedPreferencesManager.setImageUri(imageUri);
                 inflateEditor();
             }
         }
@@ -258,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                     fragmentManager.beginTransaction();
             transaction.add(R.id.images_fragment, fragment, GALLERY);
             transaction.commit();
-            fragmentManager.executePendingTransactions();
+            //fragmentManager.executePendingTransactions();
             fragment.setAdapter(galleryAdapter);
 
         } else {
@@ -280,9 +307,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onEditorClosed() {
-        FragmentTransaction transaction = fragmentManager.findFragmentByTag(IMAGE_EDITOR).getFragmentManager().beginTransaction();
-        transaction.remove(fragmentManager.findFragmentByTag(IMAGE_EDITOR));
-        transaction.commit();
+        fragmentManager.popBackStack();
         showProgress(false);
         showFabButton(true);
     }
@@ -299,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     public void onUploadImageCompleted(Image image) {
         onEditorClosed();
         deleteCacheFile(this);
+        galleryAdapter.notifyDataSetChanged();
         showGallery();
     }
 

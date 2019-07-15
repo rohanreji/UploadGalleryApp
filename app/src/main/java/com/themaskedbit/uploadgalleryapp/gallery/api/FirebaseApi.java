@@ -61,7 +61,7 @@ public class FirebaseApi implements ApiHelper {
                     public void onSuccess(Uri uri) {
 
                         Image image = new Image(file.getName(),uri.toString());
-                        pushToFirebaseDb(image, idlingResource);
+                        pushToFirebaseDb(image, idlingResource, user);
                     }
                 });
 
@@ -119,8 +119,8 @@ public class FirebaseApi implements ApiHelper {
         }
     }
 
-    private void pushToFirebaseDb(final Image image, final IdlingResourceApp idlingResource){
-        DatabaseReference pushReference = databaseReference.push();
+    private void pushToFirebaseDb(final Image image, final IdlingResourceApp idlingResource, User user){
+        DatabaseReference pushReference = databaseReference.child(user.getId()).push();
         pushToDbTask = pushReference.setValue(image);
         pushToDbTask.addOnSuccessListener(new OnSuccessListener() {
             @Override

@@ -44,7 +44,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class FIrebaseApiSuccessTest {
+public class FirebaseApiSuccessTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
@@ -126,6 +126,7 @@ public class FIrebaseApiSuccessTest {
         }).when(mockTask).addOnSuccessListener(any(OnSuccessListener.class));
         image = new Image(file.getName(),uri.toString());
 
+        when(databaseReference.child(anyString())).thenReturn(databaseReference);
         when(databaseReference.push()).thenReturn(pushReference);
         when(pushReference.setValue(any(Image.class))).thenReturn(mockPush);
         doAnswer(new Answer() {

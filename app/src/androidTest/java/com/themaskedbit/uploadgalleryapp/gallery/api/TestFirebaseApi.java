@@ -27,7 +27,15 @@ public class TestFirebaseApi implements ApiHelper {
 
     @Override
     public void uploadImages(Uri uri, File file, IdlingResourceApp idlingResource, String name) {
-
+        if(testUser.getId().equals("error")){
+            Exception e =new Exception();
+            viewManager.uploadError(e);
+        }
+        else {
+            final Image img1 = new Image("image1","https://picsum.photos/id/760/200/300");
+            imageList.setImages(img1);
+            viewManager.uploadSuccess(img1);
+        }
     }
 
     @Override

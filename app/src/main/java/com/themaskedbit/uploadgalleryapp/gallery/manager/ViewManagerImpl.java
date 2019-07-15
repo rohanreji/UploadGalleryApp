@@ -77,6 +77,7 @@ public class ViewManagerImpl implements ViewManager {
 
     @Override
     public void start(@Nullable IdlingResourceApp idlingResource) {
+        view.onFetchImagesStarted();
         apiHelper.downloadImages(idlingResource);
     }
 

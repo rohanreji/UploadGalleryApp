@@ -113,7 +113,6 @@ public class ImageEditFragment extends Fragment implements ImageEditFragmentInte
     public void save() {
         binding.editorProgressbar.setVisibility(View.VISIBLE);
         manipulateControls(false);
-        //close();
         listener.onEditorSaved(idlingResource, getCacheFile(getContext()),binding.editorCropview.getCroppedBitmap());
     }
 

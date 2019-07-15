@@ -150,6 +150,8 @@ public class FirebaseApiFailTest {
         }).when(mockTask).addOnSuccessListener(any(OnSuccessListener.class));
         image = new Image(file.getName(),uri.toString());
 
+        when(databaseReference.child(anyString())).thenReturn(databaseReference);
+        when(databaseReference.push()).thenReturn(pushReference);
         when(databaseReference.push()).thenReturn(pushReference);
         when(pushReference.setValue(any(Image.class))).thenReturn(mockPush);
         doAnswer(new Answer() {
