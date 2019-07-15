@@ -116,6 +116,8 @@ public class FabButtonClickTest {
         onView(withId(R.id.images_fragment)).check(matches(isDisplayed()));
     }
 
+
+
     @After
     public void unregisterIdlingResource() {
         if (idlingResource != null) {

@@ -14,6 +14,7 @@ import com.google.firebase.storage.UploadTask;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.ViewManager;
 import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
 import com.themaskedbit.uploadgalleryapp.gallery.model.ImageList;
+import com.themaskedbit.uploadgalleryapp.gallery.model.User;
 import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
 
 import org.junit.Before;
@@ -32,6 +33,8 @@ import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.util.Arrays;
+
+import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -80,12 +83,14 @@ public class FIrebaseApiSuccessTest {
 
     @Mock
     DataSnapshot dataSnapshot;
+    @Mock
+    User user;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         argument = ArgumentCaptor.forClass(Image.class);
-        firebaseApi = new FirebaseApi(storageReference,databaseReference,firebaseDatabase,imageList);
+        firebaseApi = new FirebaseApi(storageReference,databaseReference,firebaseDatabase,imageList, user);
         firebaseApi.setPresenter(viewManager);
     }
 
@@ -98,7 +103,10 @@ public class FIrebaseApiSuccessTest {
             e.printStackTrace();
             file = null;
         }
+
+        when(user.getId()).thenReturn("user1");
         when(storageReference.child(anyString())).thenReturn(mockImageStorageReference);
+        when(mockImageStorageReference.child(anyString())).thenReturn(mockImageStorageReference);
         when(mockImageStorageReference.putFile(uri)).thenReturn(uploadTask);
         doAnswer(new Answer() {
             @Override
@@ -136,6 +144,8 @@ public class FIrebaseApiSuccessTest {
 
     @Test
     public void downloadImagesTest() {
+        when(user.getId()).thenReturn("user1");
+        when(databaseReference.child(anyString())).thenReturn(databaseReference);
         when(dataSnapshot.getChildren()).thenReturn(Arrays.asList(dataSnapshot));
         doAnswer(new Answer() {
             @Override

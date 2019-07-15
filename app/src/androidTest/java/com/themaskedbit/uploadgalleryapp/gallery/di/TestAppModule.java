@@ -16,12 +16,16 @@ import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManage
 
 import javax.inject.Singleton;
 
+import dagger.Module;
 import dagger.Provides;
 
+@Module
 public class TestAppModule extends AppModule {
-    public TestAppModule(UploadGalleryApp app) {
+    public TestAppModule(final UploadGalleryApp app) {
         super(app);
     }
+
+
 
     @NonNull
     @Override
@@ -30,8 +34,8 @@ public class TestAppModule extends AppModule {
     }
 
     @Override
-    ApiHelper provideApiHelper(StorageReference storageReference, DatabaseReference databaseReference, FirebaseDatabase firebaseDatabase, ImageList imageList) {
-        return new TestFirebaseApi();
+    ApiHelper getApiHelper(StorageReference storageReference, DatabaseReference databaseReference, FirebaseDatabase firebaseDatabase, ImageList imageList, User user) {
+        return new TestFirebaseApi((TestUser)user, imageList);
     }
 
 }

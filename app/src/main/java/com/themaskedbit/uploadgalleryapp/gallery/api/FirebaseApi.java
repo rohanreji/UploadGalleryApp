@@ -17,6 +17,7 @@ import com.google.firebase.storage.UploadTask;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.ViewManager;
 import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
 import com.themaskedbit.uploadgalleryapp.gallery.model.ImageList;
+import com.themaskedbit.uploadgalleryapp.gallery.model.User;
 import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
 
 import java.io.File;
@@ -30,12 +31,14 @@ public class FirebaseApi implements ApiHelper {
     private ValueEventListener mListener;
     private FirebaseDatabase firebaseDatabase;
     private ImageList imageList;
+    private User user;
 
-    public FirebaseApi(StorageReference storageReference, DatabaseReference databaseReference, FirebaseDatabase firebaseDatabase, ImageList imageList){
+    public FirebaseApi(StorageReference storageReference, DatabaseReference databaseReference, FirebaseDatabase firebaseDatabase, ImageList imageList, User user){
         this.storageReference = storageReference;
         this.databaseReference = databaseReference;
         this.imageList = imageList;
         this.firebaseDatabase = firebaseDatabase;
+        this.user = user;
     }
 
     @Override
@@ -45,9 +48,9 @@ public class FirebaseApi implements ApiHelper {
 
     @Override
     public void uploadImages(Uri uri, final File file, final IdlingResourceApp idlingResource, String name) {
-        final StorageReference imageStorageRef =  storageReference.child(name);
+        final StorageReference imageStorageRef =  storageReference.child(user.getId()).child(name);
         //Firebase will do the upload off the main thread.
-        IdlingResourceApp.set(idlingResource, true);
+        IdlingResourceApp.set(idlingResource, false);
         uploadTask = imageStorageRef.putFile(uri);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -67,7 +70,7 @@ public class FirebaseApi implements ApiHelper {
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                IdlingResourceApp.set(idlingResource, false);
+                IdlingResourceApp.set(idlingResource, true);
                 viewManager.uploadError(e);
             }
         });
@@ -75,8 +78,8 @@ public class FirebaseApi implements ApiHelper {
 
     @Override
     public void downloadImages(final IdlingResourceApp idlingResource) {
-        IdlingResourceApp.set(idlingResource, true);
-        mListener = databaseReference.addValueEventListener(new ValueEventListener() {
+        IdlingResourceApp.set(idlingResource, false);
+        mListener = databaseReference.child(user.getId()).addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -88,13 +91,13 @@ public class FirebaseApi implements ApiHelper {
                     viewManager.fetchDone(imageList.getImages());
                 }
                 viewManager.fetchComplete();
-                IdlingResourceApp.set(idlingResource, false);
+                IdlingResourceApp.set(idlingResource, true);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 viewManager.fetchError(databaseError.toException());
-                IdlingResourceApp.set(idlingResource, false);
+                IdlingResourceApp.set(idlingResource, true);
             }
         });
 
@@ -122,14 +125,14 @@ public class FirebaseApi implements ApiHelper {
         pushToDbTask.addOnSuccessListener(new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
-                IdlingResourceApp.set(idlingResource, false);
+                IdlingResourceApp.set(idlingResource, true);
                 viewManager.uploadSuccess(image);
             }
         });
         pushToDbTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                IdlingResourceApp.set(idlingResource, false);
+                IdlingResourceApp.set(idlingResource, true);
                 viewManager.uploadError(e);
             }
         });

@@ -3,6 +3,7 @@ package com.themaskedbit.uploadgalleryapp.gallery.di;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.android.gms.common.api.Api;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -88,19 +89,23 @@ public class AppModule {
     @Provides
     @Singleton
     DatabaseReference provideDatabaseReference(User user) {
-        return FirebaseDatabase.getInstance().getReference().child("images").child(user.getId());
+        return FirebaseDatabase.getInstance().getReference().child("images");
     }
 
     @Provides
     @Singleton
     StorageReference provideStorageReference(User user) {
-        return FirebaseStorage.getInstance().getReference().child("images").child(user.getId());
+        return FirebaseStorage.getInstance().getReference().child("images");
     }
 
     @Provides
     @Singleton
-    ApiHelper provideApiHelper(StorageReference storageReference, DatabaseReference databaseReference, FirebaseDatabase firebaseDatabase, ImageList imageList) {
-        return new FirebaseApi(storageReference,databaseReference, firebaseDatabase, imageList);
+    ApiHelper provideApiHelper(StorageReference storageReference, DatabaseReference databaseReference, FirebaseDatabase firebaseDatabase, ImageList imageList, User user) {
+        return getApiHelper(storageReference,databaseReference, firebaseDatabase, imageList, user);
+    }
+
+    ApiHelper getApiHelper(StorageReference storageReference, DatabaseReference databaseReference, FirebaseDatabase firebaseDatabase, ImageList imageList, User user) {
+        return new FirebaseApi(storageReference,databaseReference, firebaseDatabase, imageList, user);
     }
 
     @Provides

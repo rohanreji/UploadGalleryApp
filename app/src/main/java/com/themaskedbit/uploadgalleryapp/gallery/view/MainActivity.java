@@ -37,6 +37,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.test.espresso.IdlingResource;
 
@@ -83,17 +84,21 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Nullable
     private IdlingResourceApp idlingResource;
 
+    FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         dataBinding = DataBindingUtil.setContentView(this,R.layout.activity_main);
         setSupportActionBar(dataBinding.toolbar);
+        fragmentManager = getSupportFragmentManager();
         fab = dataBinding.fab;
         progressBar = dataBinding.layoutGallery.progress;
         context = this;
         viewManager.setView(this);
         viewManager.start(idlingResource);
+
         //click handler for fab button
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
         ImageEditFragment imageEditFragment = new ImageEditFragment();
         FragmentTransaction transaction =
-                getSupportFragmentManager().beginTransaction();
+                fragmentManager.beginTransaction();
         transaction.add(R.id.editor_fragment, imageEditFragment, IMAGE_EDITOR);
         transaction.addToBackStack(IMAGE_EDITOR);
         transaction.commit();
@@ -244,23 +249,26 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         showProgress(false);
     }
 
-    private void showGallery() {
+    private Gallery showGallery() {
         final Fragment fragmentByTag = findGallery();
         Gallery fragment;
         if (fragmentByTag == null) {
             fragment = new Gallery();
             FragmentTransaction transaction =
-                    getSupportFragmentManager().beginTransaction();
+                    fragmentManager.beginTransaction();
             transaction.add(R.id.images_fragment, fragment, GALLERY);
             transaction.commit();
+            fragmentManager.executePendingTransactions();
             fragment.setAdapter(galleryAdapter);
+
         } else {
             fragment = (Gallery) fragmentByTag;
         }
+        return fragment;
     }
 
     private Fragment findGallery() {
-        return getSupportFragmentManager().findFragmentByTag(GALLERY);
+        return fragmentManager.findFragmentByTag(GALLERY);
     }
 
     @Override
@@ -272,8 +280,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onEditorClosed() {
-        FragmentTransaction transaction = getSupportFragmentManager().findFragmentByTag(IMAGE_EDITOR).getFragmentManager().beginTransaction();
-        transaction.remove(getSupportFragmentManager().findFragmentByTag(IMAGE_EDITOR));
+        FragmentTransaction transaction = fragmentManager.findFragmentByTag(IMAGE_EDITOR).getFragmentManager().beginTransaction();
+        transaction.remove(fragmentManager.findFragmentByTag(IMAGE_EDITOR));
         transaction.commit();
         showProgress(false);
         showFabButton(true);

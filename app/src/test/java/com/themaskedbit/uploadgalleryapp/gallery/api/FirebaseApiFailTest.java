@@ -15,6 +15,7 @@ import com.google.firebase.storage.UploadTask;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.ViewManager;
 import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
 import com.themaskedbit.uploadgalleryapp.gallery.model.ImageList;
+import com.themaskedbit.uploadgalleryapp.gallery.model.User;
 import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
 
 import org.junit.Before;
@@ -32,6 +33,8 @@ import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.util.Arrays;
+
+import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -76,6 +79,8 @@ public class FirebaseApiFailTest {
     public TemporaryFolder folder = new TemporaryFolder();
     FirebaseApi firebaseApi;
     ArgumentCaptor<Image> argument;
+    @Mock
+    User user;
 
     @Mock
     UploadTask.TaskSnapshot taskSnapshot;
@@ -84,7 +89,7 @@ public class FirebaseApiFailTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         argument = ArgumentCaptor.forClass(Image.class);
-        firebaseApi = new FirebaseApi(storageReference,databaseReference,firebaseDatabase,imageList);
+        firebaseApi = new FirebaseApi(storageReference,databaseReference,firebaseDatabase,imageList, user);
         firebaseApi.setPresenter(viewManager);
     }
 
@@ -97,7 +102,9 @@ public class FirebaseApiFailTest {
             e.printStackTrace();
             file = null;
         }
+        when(user.getId()).thenReturn("user1");
         when(storageReference.child(anyString())).thenReturn(mockImageStorageReference);
+        when(mockImageStorageReference.child(anyString())).thenReturn(mockImageStorageReference);
         when(mockImageStorageReference.putFile(uri)).thenReturn(uploadTask);
         doAnswer(new Answer() {
             @Override
@@ -121,7 +128,9 @@ public class FirebaseApiFailTest {
             e.printStackTrace();
             file = null;
         }
+        when(user.getId()).thenReturn("user1");
         when(storageReference.child(anyString())).thenReturn(mockImageStorageReference);
+        when(mockImageStorageReference.child(anyString())).thenReturn(mockImageStorageReference);
         when(mockImageStorageReference.putFile(uri)).thenReturn(uploadTask);
         doAnswer(new Answer() {
             @Override
@@ -158,6 +167,8 @@ public class FirebaseApiFailTest {
 
     @Test
     public void downloadImagesTest() {
+        when(user.getId()).thenReturn("user1");
+        when(databaseReference.child(anyString())).thenReturn(databaseReference);
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
