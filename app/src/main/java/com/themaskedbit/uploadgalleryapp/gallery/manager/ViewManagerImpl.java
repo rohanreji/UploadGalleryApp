@@ -51,7 +51,7 @@ public class ViewManagerImpl implements ViewManager {
     private ApiHelper apiHelper;
 
     public ViewManagerImpl(ApiHelper apiHelper) {
-         this.apiHelper = apiHelper;
+        this.apiHelper = apiHelper;
         apiHelper.setPresenter(this);
     }
 

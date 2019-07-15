@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onFetchImagesStarted() {
-       showProgress(true);
+        showProgress(true);
     }
 
     @Override

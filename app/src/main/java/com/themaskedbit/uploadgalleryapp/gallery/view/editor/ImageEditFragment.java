@@ -1,6 +1,7 @@
 package com.themaskedbit.uploadgalleryapp.gallery.view.editor;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -90,7 +91,6 @@ public class ImageEditFragment extends Fragment implements ImageEditFragmentInte
         View view = binding.getRoot();
         return view;
     }
-
 
 
     @Override
