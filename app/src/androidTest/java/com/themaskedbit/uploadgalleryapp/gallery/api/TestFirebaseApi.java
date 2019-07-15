@@ -53,6 +53,11 @@ public class TestFirebaseApi implements ApiHelper {
                 viewManager.fetchComplete();
                 break;
             }
+            case "user3": {
+                imageList.clear();
+                viewManager.fetchComplete();
+                break;
+            }
             case "error": {
                 imageList.clear();
                 Exception e =new Exception();
