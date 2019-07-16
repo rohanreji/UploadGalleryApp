@@ -127,15 +127,15 @@ public class FirebaseApi implements ApiHelper {
         pushToDbTask.addOnSuccessListener(new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
-                IdlingResourceApp.set(idlingResource, true);
                 viewManager.uploadSuccess(image);
+                IdlingResourceApp.set(idlingResource, true);
             }
         });
         pushToDbTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                IdlingResourceApp.set(idlingResource, true);
                 viewManager.uploadError(e);
+                IdlingResourceApp.set(idlingResource, true);
             }
         });
     }
