@@ -99,12 +99,17 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         progressBar = dataBinding.layoutGallery.progress;
         context = this;
         viewManager.setView(this);
+
         showRefreshButton(false);
+        showStub(false);
+        showFabButton(true);
+        showProgress(true);
+
         if (isNetworkAvailable(this)) {
-            showStub(false);
             viewManager.start(idlingResource);
         } else {
             showRefreshButton(true);
+            showStub(true);
             showProgress(false);
         }
 
@@ -120,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showProgress(false);
 
                 //for camera
                 int okStringID = 0;
@@ -151,9 +155,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     }
 
-    private void showStub(boolean show) {
-        dataBinding.layoutGallery.tvStub.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
 
     private void openGallery() {
         if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this,
@@ -166,6 +167,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             if (galleryIntent.resolveActivity(getPackageManager()) != null) {
+                showProgress(false);
+                showStub(false);
+                showRefreshButton(false);
                 startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
             } else {
                 Snackbar.make(fab, R.string.error_open_gallery, Snackbar.LENGTH_LONG).show();
@@ -187,6 +191,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                     FileHelper.getCacheFile(this));
             openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             if (openCameraIntent.resolveActivity(getPackageManager()) != null) {
+                showProgress(false);
+                showStub(false);
+                showRefreshButton(false);
                 startActivityForResult(openCameraIntent, REQUEST_IMAGE_CAPTURE);
             } else {
                 Snackbar.make(fab, R.string.error_open_camera, Snackbar.LENGTH_LONG).show();
@@ -196,6 +203,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     private void inflateEditor() {
         showProgress(false);
+        showStub(false);
+        showRefreshButton(false);
         showFabButton(false);
 
         ImageEditFragment imageEditFragment = new ImageEditFragment();
@@ -207,20 +216,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         imageEditFragment.setEditorListener(idlingResource, viewManager);
     }
 
-    private void showProgress(boolean show) {
-        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
-    private void showRefreshButton(boolean show) {
-        dataBinding.layoutGallery.refreshButton.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
-    private void showFabButton(boolean show) {
-        if (show)
-            fab.show();
-        else
-            fab.hide();
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -262,6 +257,13 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 sharedPreferencesManager.setImageUri(imageUri);
                 inflateEditor();
             }
+        } else {
+            showFabButton(true);
+            if (findGallery() == null) {
+                showProgress(false);
+                showStub(true);
+                showRefreshButton(false);
+            }
         }
     }
 
@@ -282,9 +284,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
 
     private Gallery showGallery() {
-        final Fragment fragmentById = findGallery();
+        final Fragment fragmentByTag = findGallery();
         Gallery fragment;
-        if (fragmentById == null) {
+        if (fragmentByTag == null) {
             fragment = new Gallery();
             FragmentTransaction transaction =
                     fragmentManager.beginTransaction();
@@ -293,13 +295,13 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             fragment.setAdapter(galleryAdapter);
 
         } else {
-            fragment = (Gallery) fragmentById;
+            fragment = (Gallery) fragmentByTag;
         }
         return fragment;
     }
 
     private Fragment findGallery() {
-        return fragmentManager.findFragmentById(R.id.gallery_rv);
+        return fragmentManager.findFragmentByTag(GALLERY);
     }
 
     // Fetch image callbacks
@@ -311,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Override
     public void onFetchImageDone(List<Image> imageList) {
         showProgress(false);
+        showFabButton(true);
         if (imageList.isEmpty()) {
             showStub(true);
         } else {
@@ -329,8 +332,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Override
     public void onFetchImagesError(Exception e) {
         showProgress(false);
-        showFabButton(true);
+        showFabButton(false);
         showStub(true);
+        showRefreshButton(true);
         showError(FETCH_ERROR);
     }
 
@@ -347,6 +351,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     public void onUploadImageCompleted(Image image) {
         onEditorClosed();
         deleteCacheFile(this);
+        showProgress(false);
+        showFabButton(true);
+        showStub(false);
+        showRefreshButton(false);
         galleryAdapter.notifyDataSetChanged();
         showGallery();
     }
@@ -356,6 +364,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     public void onUploadImageError(Exception e) {
         onEditorClosed();
         deleteCacheFile(this);
+        showProgress(false);
+        showFabButton(true);
+        showStub(false);
+        showRefreshButton(false);
         showError(UPLOAD_ERROR);
         showGallery();
     }
@@ -366,6 +378,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         fragmentManager.popBackStack();
         showProgress(false);
         showFabButton(true);
+        showRefreshButton(false);
+        if (findGallery() != null) {
+            showStub(false);
+        } else {
+            showStub(true);
+        }
     }
 
     @Override
@@ -412,7 +430,27 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             showProgress(true);
             showStub(false);
             showRefreshButton(false);
+            showFabButton(false);
             viewManager.start(idlingResource);
         }
+    }
+
+    private void showProgress(boolean show) {
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    private void showRefreshButton(boolean show) {
+        dataBinding.layoutGallery.refreshButton.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    private void showFabButton(boolean show) {
+        if (show)
+            fab.show();
+        else
+            fab.hide();
+    }
+
+    private void showStub(boolean show) {
+        dataBinding.layoutGallery.tvStub.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 }
