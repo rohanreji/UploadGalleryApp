@@ -94,12 +94,14 @@ public class FirebaseApi implements ApiHelper {
                 viewManager.fetchDone(imageList.getImages());
                 //viewManager.fetchComplete();
                 IdlingResourceApp.set(idlingResource, true);
+                databaseReference.child(user.getId()).removeEventListener(mListener);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 viewManager.fetchError(databaseError.toException());
                 IdlingResourceApp.set(idlingResource, true);
+                databaseReference.child(user.getId()).removeEventListener(mListener);
             }
         });
 
@@ -117,10 +119,17 @@ public class FirebaseApi implements ApiHelper {
     @Override
     public void cancelDownload() {
         if(mListener!=null) {
-            databaseReference.removeEventListener(mListener);
+            databaseReference.child(user.getId()).removeEventListener(mListener);
         }
     }
 
+    /**
+     * Push the image uri from storage bucket to firebase realtime db
+     *
+     * @param image Image object prefilled with name and uri
+     * @param idlingResource idling resource for espresso
+     * @param user user id, object under which data has to be pushed.
+     */
     private void pushToFirebaseDb(final Image image, final IdlingResourceApp idlingResource, User user){
         DatabaseReference pushReference = databaseReference.child(user.getId()).push();
         pushToDbTask = pushReference.setValue(image);
@@ -128,6 +137,7 @@ public class FirebaseApi implements ApiHelper {
             @Override
             public void onSuccess(Object o) {
                 viewManager.uploadSuccess(image);
+                imageList.setImages(image);
                 IdlingResourceApp.set(idlingResource, true);
             }
         });
@@ -135,6 +145,7 @@ public class FirebaseApi implements ApiHelper {
             @Override
             public void onFailure(@NonNull Exception e) {
                 viewManager.uploadError(e);
+                imageList.setImages(image);
                 IdlingResourceApp.set(idlingResource, true);
             }
         });
