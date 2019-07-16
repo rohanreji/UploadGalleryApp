@@ -8,6 +8,7 @@ import java.util.List;
  * ImageList used by recyclerview adapter for updating
  */
 public class ImageList {
+    private final static int SORT_ORDER=0;
     ArrayList<Image> images;
 
     public ImageList(){
@@ -25,6 +26,6 @@ public class ImageList {
         if (this.images == null) {
             this.images = new ArrayList<>();
         }
-        this.images.addAll(Arrays.asList(images));
+        this.images.addAll(SORT_ORDER,Arrays.asList(images));
     }
 }

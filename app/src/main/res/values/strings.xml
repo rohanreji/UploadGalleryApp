@@ -9,6 +9,7 @@
     <string name="temp_image_prefix">temp-image</string>
     <string name="temp_image_suffix">.jpg</string>
     <string name="no_images">Oops. Nothing here!</string>
+    <string name="no_net">Not connected!</string>
     <string name="refresh_text">Refresh</string>
     <string name="error_open_camera">Sorry! Unable to open camera</string>
     <string name="error_open_gallery">Sorry! Unable to open gallery</string>

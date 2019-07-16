@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.test.espresso.IdlingResource;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.isseiaoki.simplecropview.CropImageView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
@@ -22,6 +23,7 @@ import com.themaskedbit.uploadgalleryapp.R;
 import com.themaskedbit.uploadgalleryapp.databinding.FragmentImageEditBinding;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
 import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
+import com.themaskedbit.uploadgalleryapp.gallery.view.MainActivity;
 
 import javax.inject.Inject;
 
@@ -104,9 +106,14 @@ public class ImageEditFragment extends Fragment implements ImageEditFragmentInte
     }
 
     public void save() {
-        binding.editorProgressbar.setVisibility(View.VISIBLE);
-        manipulateControls(false);
-        listener.onEditorSaved(idlingResource, getCacheFile(getContext()), binding.editorCropview.getCroppedBitmap());
+        if(((MainActivity)getActivity()).isNetworkAvailable(getActivity())) {
+            binding.editorProgressbar.setVisibility(View.VISIBLE);
+            manipulateControls(false);
+            listener.onEditorSaved(idlingResource, getCacheFile(getContext()), binding.editorCropview.getCroppedBitmap());
+        }
+        else {
+            Snackbar.make(getView(), R.string.no_net, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     public void close() {

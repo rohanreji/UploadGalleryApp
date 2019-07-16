@@ -24,7 +24,8 @@ public class Gallery extends Fragment implements GalleryInterface {
                              Bundle savedInstanceState) {
         LayoutGalleryBinding galleryBinding = DataBindingUtil.inflate(
                 inflater, R.layout.layout_gallery, container, false);
-        galleryBinding.galleryRv.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        galleryBinding.galleryRv.setLayoutManager(gridLayoutManager);
         galleryBinding.galleryRv.setAdapter(adapter);
         return galleryBinding.getRoot();
     }
