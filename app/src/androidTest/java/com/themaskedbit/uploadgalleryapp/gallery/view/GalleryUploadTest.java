@@ -113,13 +113,10 @@ public class GalleryUploadTest {
         onView(withId(R.id.fab)).perform(click());
         onView(withText(R.string.dialog_upload_message)).check(matches(isDisplayed()));
         onView(withText(R.string.dialog_camera)).perform(click());
-        TestUser.set("user1");
+        TestUser.set("user3");
         onView(withId(R.id.editor_save)).check(matches(isDisplayed()));
         onView(withId(R.id.editor_save)).perform(click());
-        onView(allOf(withId(R.id.gallery_rv), isDescendantOfA(allOf(withId(R.id.images_fragment),
-                isDescendantOfA(withId(R.id.layout_gallery)))))).check(matches(isDisplayed()));
-        onView(allOf(withId(R.id.gallery_rv), isDescendantOfA(allOf(withId(R.id.images_fragment),
-                isDescendantOfA(withId(R.id.layout_gallery)))))).check(new RecyclerviewAssertion(equalTo(1)));
+        onView(withId(R.id.layout_gallery)).check(matches(isDisplayed()));
     }
 
     @After

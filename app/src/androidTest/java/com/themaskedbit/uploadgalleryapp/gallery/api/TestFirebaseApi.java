@@ -31,6 +31,8 @@ public class TestFirebaseApi implements ApiHelper {
             Exception e = new Exception();
             viewManager.uploadError(e);
         } else {
+            imageList.clear();
+            downloadImages(idlingResource);
             final Image img1 = new Image("image1", "https://picsum.photos/id/760/200/300");
             imageList.setImages(img1);
             viewManager.uploadSuccess(img1);
