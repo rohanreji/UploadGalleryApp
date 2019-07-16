@@ -9,12 +9,12 @@ public class TestUser extends User {
 
     public TestUser(SharedPreferencesManager sharedPreferencesManager) {
         super(sharedPreferencesManager);
-        id="0x1";
+        id = "0x1";
     }
 
     @Override
     public String getId() {
-        return test!=null ? test: id;
+        return test != null ? test : id;
     }
 
     public static void set(String set) {

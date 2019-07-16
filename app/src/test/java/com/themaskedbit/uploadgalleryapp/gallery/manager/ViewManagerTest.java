@@ -5,10 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 
 import com.themaskedbit.uploadgalleryapp.gallery.api.ApiHelper;
-import com.themaskedbit.uploadgalleryapp.gallery.api.FirebaseApi;
-import com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper;
-import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
-import com.themaskedbit.uploadgalleryapp.gallery.model.ImageList;
 import com.themaskedbit.uploadgalleryapp.gallery.model.User;
 import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
 import com.themaskedbit.uploadgalleryapp.gallery.view.MainActivityInterface;
@@ -17,8 +13,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -27,15 +21,9 @@ import org.mockito.junit.MockitoRule;
 
 import java.io.File;
 
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
-
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class ViewManagerTest {
     @Rule

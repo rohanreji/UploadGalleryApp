@@ -6,7 +6,6 @@ import com.themaskedbit.uploadgalleryapp.gallery.manager.ViewManager;
 import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
 import com.themaskedbit.uploadgalleryapp.gallery.model.ImageList;
 import com.themaskedbit.uploadgalleryapp.gallery.model.TestUser;
-import com.themaskedbit.uploadgalleryapp.gallery.model.User;
 import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
 
 import java.io.File;
@@ -16,10 +15,11 @@ public class TestFirebaseApi implements ApiHelper {
     private ImageList imageList;
     private ViewManager viewManager;
 
-    public TestFirebaseApi(TestUser user, ImageList imageList){
+    public TestFirebaseApi(TestUser user, ImageList imageList) {
         this.testUser = user;
         this.imageList = imageList;
     }
+
     @Override
     public void setPresenter(ViewManager manager) {
         this.viewManager = manager;
@@ -27,12 +27,11 @@ public class TestFirebaseApi implements ApiHelper {
 
     @Override
     public void uploadImages(Uri uri, File file, IdlingResourceApp idlingResource, String name) {
-        if(testUser.getId().equals("error")){
-            Exception e =new Exception();
+        if (testUser.getId().equals("error")) {
+            Exception e = new Exception();
             viewManager.uploadError(e);
-        }
-        else {
-            final Image img1 = new Image("image1","https://picsum.photos/id/760/200/300");
+        } else {
+            final Image img1 = new Image("image1", "https://picsum.photos/id/760/200/300");
             imageList.setImages(img1);
             viewManager.uploadSuccess(img1);
         }
@@ -40,9 +39,9 @@ public class TestFirebaseApi implements ApiHelper {
 
     @Override
     public void downloadImages(IdlingResourceApp idlingResource) {
-        final Image img1 = new Image("image1","https://picsum.photos/id/760/200/300");
-        final Image img2 = new Image("image1","https://picsum.photos/id/237/200/300");
-        final Image img3 = new Image("image1","https://picsum.photos/id/159/200/300?grayscale");
+        final Image img1 = new Image("image1", "https://picsum.photos/id/760/200/300");
+        final Image img2 = new Image("image1", "https://picsum.photos/id/237/200/300");
+        final Image img3 = new Image("image1", "https://picsum.photos/id/159/200/300?grayscale");
 
         switch (testUser.getId()) {
             case "user1": {
@@ -65,7 +64,7 @@ public class TestFirebaseApi implements ApiHelper {
             }
             case "error": {
                 imageList.clear();
-                Exception e =new Exception();
+                Exception e = new Exception();
                 viewManager.fetchError(e);
                 break;
             }

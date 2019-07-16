@@ -12,7 +12,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class UserTest {
     @Rule
@@ -31,14 +30,14 @@ public class UserTest {
         Mockito.when(sharedPreferencesManager.getUserId()).thenReturn(null);
         User user1 = new User(sharedPreferencesManager);
         User user2 = new User(sharedPreferencesManager);
-        assertEquals(user1.getId(),user2.getId());
+        assertEquals(user1.getId(), user2.getId());
     }
 
     @Test
     public void alreadyInitiatedUserSetupTest() {
         Mockito.when(sharedPreferencesManager.getUserId()).thenReturn("0xtest");
         User user = new User(sharedPreferencesManager);
-        assertEquals(user.getId(),"0xtest");
+        assertEquals(user.getId(), "0xtest");
     }
 
 }

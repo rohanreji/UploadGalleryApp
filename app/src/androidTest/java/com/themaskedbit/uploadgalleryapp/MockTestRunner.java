@@ -1,4 +1,5 @@
 package com.themaskedbit.uploadgalleryapp;
+
 import android.app.Application;
 import android.content.Context;
 

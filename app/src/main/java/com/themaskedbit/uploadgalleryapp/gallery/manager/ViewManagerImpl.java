@@ -1,9 +1,6 @@
 package com.themaskedbit.uploadgalleryapp.gallery.manager;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 
 import androidx.annotation.Nullable;

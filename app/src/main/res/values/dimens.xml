@@ -1,4 +1,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="boder_little_margin">15dp</dimen>
+    <dimen name="manipulator_size">70dp</dimen>
 </resources>

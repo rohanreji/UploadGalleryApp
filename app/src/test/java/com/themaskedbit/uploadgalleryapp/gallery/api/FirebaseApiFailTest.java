@@ -5,7 +5,6 @@ import android.net.Uri;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -23,7 +22,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
@@ -32,11 +30,7 @@ import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
 
 import java.io.File;
-import java.util.Arrays;
 
-import javax.inject.Inject;
-
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
@@ -89,7 +83,7 @@ public class FirebaseApiFailTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         argument = ArgumentCaptor.forClass(Image.class);
-        firebaseApi = new FirebaseApi(storageReference,databaseReference,firebaseDatabase,imageList, user);
+        firebaseApi = new FirebaseApi(storageReference, databaseReference, firebaseDatabase, imageList, user);
         firebaseApi.setPresenter(viewManager);
     }
 
@@ -109,12 +103,12 @@ public class FirebaseApiFailTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ((OnFailureListener)invocation.getArguments()[0]).onFailure(e);
+                ((OnFailureListener) invocation.getArguments()[0]).onFailure(e);
                 return null;
             }
         }).when(uploadTask).addOnFailureListener(any(OnFailureListener.class));
 
-        firebaseApi.uploadImages(uri,file,idlingResource, "test_image");
+        firebaseApi.uploadImages(uri, file, idlingResource, "test_image");
 
         verify(viewManager).uploadError(e);
     }
@@ -135,7 +129,7 @@ public class FirebaseApiFailTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ((OnSuccessListener)invocation.getArguments()[0]).onSuccess(taskSnapshot);
+                ((OnSuccessListener) invocation.getArguments()[0]).onSuccess(taskSnapshot);
                 return null;
             }
         }).when(uploadTask).addOnSuccessListener(any(OnSuccessListener.class));
@@ -144,11 +138,11 @@ public class FirebaseApiFailTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ((OnSuccessListener)invocation.getArguments()[0]).onSuccess(uri);
+                ((OnSuccessListener) invocation.getArguments()[0]).onSuccess(uri);
                 return null;
             }
         }).when(mockTask).addOnSuccessListener(any(OnSuccessListener.class));
-        image = new Image(file.getName(),uri.toString());
+        image = new Image(file.getName(), uri.toString());
 
         when(databaseReference.child(anyString())).thenReturn(databaseReference);
         when(databaseReference.push()).thenReturn(pushReference);
@@ -157,12 +151,12 @@ public class FirebaseApiFailTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ((OnFailureListener)invocation.getArguments()[0]).onFailure(e);
+                ((OnFailureListener) invocation.getArguments()[0]).onFailure(e);
                 return null;
             }
         }).when(mockPush).addOnFailureListener(any(OnFailureListener.class));
 
-        firebaseApi.uploadImages(uri,file,idlingResource, "test_image");
+        firebaseApi.uploadImages(uri, file, idlingResource, "test_image");
 
         verify(viewManager).uploadError(e);
     }
@@ -174,7 +168,7 @@ public class FirebaseApiFailTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ((ValueEventListener)invocation.getArguments()[0]).onCancelled(databaseError);
+                ((ValueEventListener) invocation.getArguments()[0]).onCancelled(databaseError);
                 return null;
             }
         }).when(databaseReference).addValueEventListener(any(ValueEventListener.class));
