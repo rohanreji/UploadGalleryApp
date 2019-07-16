@@ -156,7 +156,6 @@ public class FirebaseApiSuccessTest {
             }
         }).when(databaseReference).addValueEventListener(any(ValueEventListener.class));
         firebaseApi.downloadImages(idlingResource);
-        verify(viewManager).fetchComplete();
         verify(viewManager).fetchDone(imageList.getImages());
     }
 

@@ -1,6 +1,7 @@
 package com.themaskedbit.uploadgalleryapp.gallery.manager;
 
 import android.content.SharedPreferences;
+import android.net.Uri;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,15 +43,14 @@ public class SharedPreferenceHelperTest {
 
     @Test
     public void uriWithoutInitializingTest() {
-        Mockito.when(sharedPreferences.getString(SharedPreferencesManagerImpl.IMG_URI, null)).thenReturn(null);
         SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManagerImpl(sharedPreferences);
         assertEquals(null, sharedPreferencesManager.getImageUri());
     }
 
     @Test
     public void uriAfterInitializingTest() {
-        Mockito.when(sharedPreferences.getString(SharedPreferencesManagerImpl.IMG_URI, null)).thenReturn("content://test");
+        Mockito.when(sharedPreferences.getString(SharedPreferencesManagerImpl.IMG_URI, "")).thenReturn("content://test");
         SharedPreferencesManager sharedPreferencesManager = new SharedPreferencesManagerImpl(sharedPreferences);
-        assertEquals("content://test", sharedPreferencesManager.getUserId());
+        assertEquals(Uri.parse("content://test"), sharedPreferencesManager.getImageUri());
     }
 }

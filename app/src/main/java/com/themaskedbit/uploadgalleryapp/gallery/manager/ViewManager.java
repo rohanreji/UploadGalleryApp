@@ -8,7 +8,9 @@ import com.themaskedbit.uploadgalleryapp.gallery.view.MainActivityInterface;
 import com.themaskedbit.uploadgalleryapp.gallery.view.editor.ImageEditFragmentInterface;
 
 import java.util.List;
-
+/*
+ * interface to manage calls between view and api
+ */
 public interface ViewManager extends ImageEditFragmentInterface.EditorListener {
     void setView(MainActivityInterface view);
     void start(@Nullable final IdlingResourceApp idlingResource);

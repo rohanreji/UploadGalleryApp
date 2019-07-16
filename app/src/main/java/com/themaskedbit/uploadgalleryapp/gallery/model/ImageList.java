@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/*
+ * ImageList used by recyclerview adapter for updating
+ */
 public class ImageList {
     ArrayList<Image> images;
 
@@ -13,13 +16,6 @@ public class ImageList {
 
     public ArrayList<Image> getImages() {
         return images;
-    }
-
-    public void setImages(List<Image> images) {
-        if (this.images == null) {
-            this.images = new ArrayList<>();
-        }
-        this.images.addAll(images);
     }
 
     public void clear(){

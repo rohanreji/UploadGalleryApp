@@ -49,21 +49,18 @@ public class TestFirebaseApi implements ApiHelper {
                 imageList.clear();
                 imageList.setImages(img1);
                 viewManager.fetchDone(imageList.getImages());
-                viewManager.fetchComplete();
                 break;
             }
             case "user2": {
                 imageList.clear();
                 imageList.setImages(img1);
-                viewManager.fetchDone(imageList.getImages());
                 imageList.setImages(img2);
                 viewManager.fetchDone(imageList.getImages());
-                viewManager.fetchComplete();
                 break;
             }
             case "user3": {
                 imageList.clear();
-                viewManager.fetchComplete();
+                viewManager.fetchDone(imageList.getImages());
                 break;
             }
             case "error": {

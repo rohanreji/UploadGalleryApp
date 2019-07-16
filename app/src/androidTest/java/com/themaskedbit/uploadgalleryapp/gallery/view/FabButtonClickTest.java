@@ -72,7 +72,6 @@ public class FabButtonClickTest {
         Instrumentation.ActivityResult galleryResult = createGalleryResult();
         intending(expectedIntent).respondWith(galleryResult);
 
-
         //UI automation for granting permissions for SDK greater than M
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getInstrumentation().getUiAutomation().executeShellCommand(

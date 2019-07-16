@@ -5,28 +5,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.themaskedbit.uploadgalleryapp.BuildConfig;
-import com.themaskedbit.uploadgalleryapp.R;
-import com.themaskedbit.uploadgalleryapp.databinding.ActivityMainBinding;
-import com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper;
-import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
-import com.themaskedbit.uploadgalleryapp.gallery.manager.ViewManager;
-import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
-import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
-import com.themaskedbit.uploadgalleryapp.gallery.view.editor.ImageEditFragment;
-import com.themaskedbit.uploadgalleryapp.gallery.view.gallery.Gallery;
-import com.themaskedbit.uploadgalleryapp.gallery.view.gallery.GalleryAdapter;
-import com.themaskedbit.uploadgalleryapp.gallery.view.util.DialogBuilder;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +26,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.test.espresso.IdlingResource;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.themaskedbit.uploadgalleryapp.R;
+import com.themaskedbit.uploadgalleryapp.databinding.ActivityMainBinding;
+import com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper;
+import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
+import com.themaskedbit.uploadgalleryapp.gallery.manager.ViewManager;
+import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
+import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
+import com.themaskedbit.uploadgalleryapp.gallery.view.editor.ImageEditFragment;
+import com.themaskedbit.uploadgalleryapp.gallery.view.gallery.Gallery;
+import com.themaskedbit.uploadgalleryapp.gallery.view.gallery.GalleryAdapter;
+import com.themaskedbit.uploadgalleryapp.gallery.view.util.DialogBuilder;
+
 import java.io.File;
 import java.util.List;
 
@@ -52,7 +51,6 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
 import static com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper.deleteCacheFile;
-import static com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper.getCacheFile;
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector, MainActivityInterface {
     public static final int PERMISSION_REQUEST_CAMERA = 100;
@@ -61,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     public static final int REQUEST_IMAGE_GALLERY = 103;
     public static final String GALLERY = "ADD PIC";
     public static final String IMAGE_EDITOR = "EDITOR";
+    public static final String UPLOAD_ERROR = "upload";
+    public static final String FETCH_ERROR = "fetch";
 
     private ActivityMainBinding dataBinding;
     private FloatingActionButton fab;
@@ -92,15 +92,30 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        dataBinding = DataBindingUtil.setContentView(this,R.layout.activity_main);
+        dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setSupportActionBar(dataBinding.toolbar);
         fragmentManager = getSupportFragmentManager();
         fab = dataBinding.fab;
         progressBar = dataBinding.layoutGallery.progress;
         context = this;
         viewManager.setView(this);
-        viewManager.start(idlingResource);
+        showRefreshButton(false);
+        if (isNetworkAvailable(this)) {
+            showStub(false);
+            viewManager.start(idlingResource);
+        } else {
+            showRefreshButton(true);
+            showProgress(false);
+        }
 
+
+        //click handler for refresh button
+        dataBinding.layoutGallery.refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                refresh();
+            }
+        });
         //click handler for fab button
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 //for camera
                 int okStringID = 0;
                 DialogInterface.OnClickListener okButtonListener = null;
-                if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                     okStringID = R.string.dialog_camera;
                     okButtonListener = new DialogInterface.OnClickListener() {
                         @Override
@@ -120,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                     };
                 }
 
-                //TODO: for gallery
+                //for gallery
                 int cancelStringId = R.string.dialog_gallery;
                 DialogInterface.OnClickListener cancelButtonListener = new DialogInterface.OnClickListener() {
                     @Override
@@ -135,6 +150,11 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         });
 
     }
+
+    private void showStub(boolean show) {
+        dataBinding.layoutGallery.tvStub.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
     private void openGallery() {
         if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -147,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             if (galleryIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
+            } else {
+                Snackbar.make(fab, R.string.error_open_gallery, Snackbar.LENGTH_LONG).show();
             }
         }
     }
@@ -167,8 +189,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             if (openCameraIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(openCameraIntent, REQUEST_IMAGE_CAPTURE);
             } else {
-                //TODO: snackbar not showing
-                Snackbar.make(fab, R.string.error_open_camera, Snackbar.LENGTH_INDEFINITE).show();
+                Snackbar.make(fab, R.string.error_open_camera, Snackbar.LENGTH_LONG).show();
             }
         }
     }
@@ -183,7 +204,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         transaction.add(R.id.editor_fragment, imageEditFragment, IMAGE_EDITOR);
         transaction.addToBackStack(IMAGE_EDITOR);
         transaction.commit();
-        //TODO: set editor listener of fragment here. Need to have an implementation of Listener.
         imageEditFragment.setEditorListener(idlingResource, viewManager);
     }
 
@@ -191,8 +211,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
+    private void showRefreshButton(boolean show) {
+        dataBinding.layoutGallery.refreshButton.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
     private void showFabButton(boolean show) {
-        if(show)
+        if (show)
             fab.show();
         else
             fab.hide();
@@ -207,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openCamera();
                 } else {
-                    Snackbar.make(fab, R.string.camera_perm_error, Snackbar.LENGTH_INDEFINITE).show();
+                    Snackbar.make(fab, R.string.camera_perm_error, Snackbar.LENGTH_LONG).show();
                 }
                 break;
             }
@@ -216,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openGallery();
                 } else {
-                    Snackbar.make(fab, R.string.camera_perm_error, Snackbar.LENGTH_INDEFINITE).show();
+                    Snackbar.make(fab, R.string.camera_perm_error, Snackbar.LENGTH_LONG).show();
                 }
                 break;
             }
@@ -233,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 File file = FileHelper.getCacheFile(getApplicationContext());
                 sharedPreferencesManager.setImageUri(FileProvider.getUriForFile(this, getApplication().getPackageName(), file));
                 inflateEditor();
-            }else if (requestCode == REQUEST_IMAGE_GALLERY) {
+            } else if (requestCode == REQUEST_IMAGE_GALLERY) {
                 final Uri imageUri = data.getData();
                 sharedPreferencesManager.setImageUri(imageUri);
                 inflateEditor();
@@ -256,6 +280,29 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         return idlingResource;
     }
 
+
+    private Gallery showGallery() {
+        final Fragment fragmentById = findGallery();
+        Gallery fragment;
+        if (fragmentById == null) {
+            fragment = new Gallery();
+            FragmentTransaction transaction =
+                    fragmentManager.beginTransaction();
+            transaction.add(R.id.images_fragment, fragment, GALLERY);
+            transaction.commit();
+            fragment.setAdapter(galleryAdapter);
+
+        } else {
+            fragment = (Gallery) fragmentById;
+        }
+        return fragment;
+    }
+
+    private Fragment findGallery() {
+        return fragmentManager.findFragmentById(R.id.gallery_rv);
+    }
+
+    // Fetch image callbacks
     @Override
     public void onFetchImagesStarted() {
         showProgress(true);
@@ -265,62 +312,36 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     public void onFetchImageDone(List<Image> imageList) {
         showProgress(false);
         if (imageList.isEmpty()) {
-            //TODO: show the empty text
+            showStub(true);
         } else {
             showGallery();
             galleryAdapter.notifyDataSetChanged();
         }
     }
 
-
+    //not used now. But may be needed.
     @Override
     public void onFetchImageOver() {
-        showProgress(false);
-    }
-
-    private Gallery showGallery() {
-        final Fragment fragmentByTag = findGallery();
-        Gallery fragment;
-        if (fragmentByTag == null) {
-            fragment = new Gallery();
-            FragmentTransaction transaction =
-                    fragmentManager.beginTransaction();
-            transaction.add(R.id.images_fragment, fragment, GALLERY);
-            transaction.commit();
-            //fragmentManager.executePendingTransactions();
-            fragment.setAdapter(galleryAdapter);
-
-        } else {
-            fragment = (Gallery) fragmentByTag;
-        }
-        return fragment;
-    }
-
-    private Fragment findGallery() {
-        return fragmentManager.findFragmentById(R.id.gallery_rv);
-    }
-
-    @Override
-    public void onFetchImagesError(Exception e) {
-        showProgress(false);
-        //TODO: showStubText();
-        showError(e);
-    }
-
-    @Override
-    public void onEditorClosed() {
-        fragmentManager.popBackStack();
         showProgress(false);
         showFabButton(true);
     }
 
     @Override
-    public void onUploadImageError(Exception e) {
-        onEditorClosed();
-        deleteCacheFile(this);
-        showError(e);
-        showGallery();
+    public void onFetchImagesError(Exception e) {
+        showProgress(false);
+        showFabButton(true);
+        showStub(true);
+        showError(FETCH_ERROR);
     }
+
+
+    // Upload image callbacks
+    @Override
+    public void onUploadImageStarted() {
+        showProgress(true);
+        showFabButton(false);
+    }
+
 
     @Override
     public void onUploadImageCompleted(Image image) {
@@ -330,12 +351,22 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         showGallery();
     }
 
+
     @Override
-    public void onUploadImageStarted() {
-        showProgress(true);
-        showFabButton(false);
+    public void onUploadImageError(Exception e) {
+        onEditorClosed();
+        deleteCacheFile(this);
+        showError(UPLOAD_ERROR);
+        showGallery();
     }
 
+
+    @Override
+    public void onEditorClosed() {
+        fragmentManager.popBackStack();
+        showProgress(false);
+        showFabButton(true);
+    }
 
     @Override
     public void onBackPressed() {
@@ -350,9 +381,38 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         viewManager.stop();
     }
 
-    private void showError(final Exception e) {
-        dialogBuilder.showDialog(IMAGE_EDITOR, this, R.string.dialog_connect_error,
-                R.string.dialog_connect_error_message, android.R.string.ok, null, 0, null);
+    private void showError(String message) {
+        switch (message) {
+            case FETCH_ERROR:
+                dialogBuilder.showDialog(IMAGE_EDITOR, this, R.string.dialog_connect_error,
+                        R.string.dialog_fetch_error_message, android.R.string.ok, null, 0, null);
+                break;
+            case UPLOAD_ERROR:
+                dialogBuilder.showDialog(IMAGE_EDITOR, this, R.string.dialog_connect_error,
+                        R.string.dialog_upload_error_message, android.R.string.ok, null, 0, null);
+                break;
+
+            default:
+                dialogBuilder.showDialog(IMAGE_EDITOR, this, R.string.dialog_connect_error,
+                        R.string.dialog_connect_error_message, android.R.string.ok, null, 0, null);
+        }
+
     }
 
+    /*
+     * Helper method to get internet status
+     */
+    public boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
+
+    public void refresh() {
+        if (isNetworkAvailable(this)) {
+            showProgress(true);
+            showStub(false);
+            showRefreshButton(false);
+            viewManager.start(idlingResource);
+        }
+    }
 }

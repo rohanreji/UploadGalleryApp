@@ -30,7 +30,11 @@ import java.io.File;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ViewManagerTest {
@@ -78,10 +82,8 @@ public class ViewManagerTest {
             e.printStackTrace();
             file = null;
         }
-
         viewManager.onEditorSaved(idlingResource,file, bitmap);
-        InOrder inOrder = Mockito.inOrder(apiHelper);
-        inOrder.verify(apiHelper, times(1)).uploadImages(Uri.fromFile(file), file, idlingResource,"test_image");
+        verify(apiHelper).uploadImages(eq(Uri.fromFile(file)), eq(file), eq(idlingResource),anyString());
     }
 
 

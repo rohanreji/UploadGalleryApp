@@ -1,8 +1,7 @@
 package com.themaskedbit.uploadgalleryapp.gallery.model;
 
-import androidx.annotation.NonNull;
 
-public class Image{
+public class Image {
     public String imageName;
 
     public String imageURL;
@@ -14,7 +13,7 @@ public class Image{
     public Image(String name, String url) {
 
         this.imageName = name;
-        this.imageURL= url;
+        this.imageURL = url;
     }
 
     public void setImageName(String imageName) {

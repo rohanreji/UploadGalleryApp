@@ -1,24 +1,15 @@
 package com.themaskedbit.uploadgalleryapp.gallery.view.gallery;
 
-import android.content.ClipData;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SortedList;
 
 import com.squareup.picasso.Picasso;
 import com.themaskedbit.uploadgalleryapp.R;
 import com.themaskedbit.uploadgalleryapp.databinding.GalleryCellBinding;
 import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
 import com.themaskedbit.uploadgalleryapp.gallery.model.ImageList;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -34,40 +25,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         this.picasso = picasso;
         picasso.setLoggingEnabled(true);
         //TODO: can we reuse ImageList
-//        images = new SortedList<>(Image.class,
-//                new SortedList.Callback<Image>() {
-//                    @Override
-//                    public int compare(final Image o1, final Image o2) {
-//                        return o1.compareTo(o2);
-//                    }
-//
-//                    @Override
-//                    public void onChanged(final int position, final int count) {
-//                        notifyItemRangeChanged(position, count);
-//                    }
-//                    @Override
-//                    public boolean areContentsTheSame(final Image oldItem,
-//                                                      final Image newItem) {
-//                        return oldItem.getUrl().equals(newItem.getUrl());
-//                    }
-//                    @Override
-//                    public boolean areItemsTheSame(final Image item1,
-//                                                   final Image item2) {
-//                        return item1.getCreatedAt().equals(item2.getCreatedAt());
-//                    }
-//                    @Override
-//                    public void onInserted(final int position, final int count) {
-//                        notifyItemRangeInserted(position, count);
-//                    }
-//                    @Override
-//                    public void onRemoved(final int position, final int count) {
-//                        notifyItemRangeRemoved(position, count);
-//                    }
-//                    @Override
-//                    public void onMoved(final int fromPosition, final int toPosition) {
-//                        notifyItemMoved(fromPosition, toPosition);
-//                    }
-//                });
     }
 
     @Override
@@ -100,6 +57,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
      */
     class ViewHolder extends RecyclerView.ViewHolder {
         private final GalleryCellBinding cellBinding;
+
         ViewHolder(GalleryCellBinding cellBinding) {
             super(cellBinding.getRoot());
             this.cellBinding = cellBinding;

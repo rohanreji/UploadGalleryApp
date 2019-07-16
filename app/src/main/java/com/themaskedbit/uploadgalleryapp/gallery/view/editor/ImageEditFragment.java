@@ -1,34 +1,27 @@
 package com.themaskedbit.uploadgalleryapp.gallery.view.editor;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.test.espresso.IdlingResource;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.isseiaoki.simplecropview.CropImageView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-import com.themaskedbit.uploadgalleryapp.BuildConfig;
 import com.themaskedbit.uploadgalleryapp.R;
 import com.themaskedbit.uploadgalleryapp.databinding.FragmentImageEditBinding;
-import com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
 import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
-import com.themaskedbit.uploadgalleryapp.gallery.view.MainActivity;
 
 import javax.inject.Inject;
 
@@ -37,9 +30,9 @@ import dagger.android.support.AndroidSupportInjection;
 import static com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper.getCacheFile;
 
 /**
- * A simple {@link Fragment} subclass..
+ * Image editor -  {@link Fragment} subclass..
  */
-public class ImageEditFragment extends Fragment implements ImageEditFragmentInterface  {
+public class ImageEditFragment extends Fragment implements ImageEditFragmentInterface {
 
     FragmentImageEditBinding binding;
 
@@ -51,7 +44,6 @@ public class ImageEditFragment extends Fragment implements ImageEditFragmentInte
 
     private EditorListener listener;
     private IdlingResourceApp idlingResource;
-
 
 
     @Override
@@ -82,6 +74,7 @@ public class ImageEditFragment extends Fragment implements ImageEditFragmentInte
                         binding.editorProgressbar.setVisibility(View.GONE);
                         IdlingResourceApp.set(idlingResource, true);
                     }
+
                     @Override
                     public void onError() {
                         binding.editorProgressbar.setVisibility(View.GONE);
@@ -113,7 +106,7 @@ public class ImageEditFragment extends Fragment implements ImageEditFragmentInte
     public void save() {
         binding.editorProgressbar.setVisibility(View.VISIBLE);
         manipulateControls(false);
-        listener.onEditorSaved(idlingResource, getCacheFile(getContext()),binding.editorCropview.getCroppedBitmap());
+        listener.onEditorSaved(idlingResource, getCacheFile(getContext()), binding.editorCropview.getCroppedBitmap());
     }
 
     public void close() {

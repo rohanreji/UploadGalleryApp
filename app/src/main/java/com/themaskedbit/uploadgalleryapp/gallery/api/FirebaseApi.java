@@ -1,5 +1,7 @@
 package com.themaskedbit.uploadgalleryapp.gallery.api;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -33,7 +35,7 @@ public class FirebaseApi implements ApiHelper {
     private ImageList imageList;
     private User user;
 
-    public FirebaseApi(StorageReference storageReference, DatabaseReference databaseReference, FirebaseDatabase firebaseDatabase, ImageList imageList, User user){
+    public FirebaseApi(StorageReference storageReference, DatabaseReference databaseReference, FirebaseDatabase firebaseDatabase, ImageList imageList, User user) {
         this.storageReference = storageReference;
         this.databaseReference = databaseReference;
         this.imageList = imageList;
@@ -48,7 +50,7 @@ public class FirebaseApi implements ApiHelper {
 
     @Override
     public void uploadImages(Uri uri, final File file, final IdlingResourceApp idlingResource, String name) {
-        final StorageReference imageStorageRef =  storageReference.child(user.getId()).child(name);
+        final StorageReference imageStorageRef = storageReference.child(user.getId()).child(name);
         //Firebase will do the upload off the main thread.
         IdlingResourceApp.set(idlingResource, false);
         uploadTask = imageStorageRef.putFile(uri);
@@ -60,7 +62,7 @@ public class FirebaseApi implements ApiHelper {
                     @Override
                     public void onSuccess(Uri uri) {
 
-                        Image image = new Image(file.getName(),uri.toString());
+                        Image image = new Image(file.getName(), uri.toString());
                         pushToFirebaseDb(image, idlingResource, user);
                     }
                 });
@@ -79,12 +81,11 @@ public class FirebaseApi implements ApiHelper {
     @Override
     public void downloadImages(final IdlingResourceApp idlingResource) {
         IdlingResourceApp.set(idlingResource, false);
+
         mListener = databaseReference.child(user.getId()).addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                imageList.clear();
-                viewManager.fetchDone(imageList.getImages());
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
 
                     Image image = postSnapshot.getValue(Image.class);
@@ -109,16 +110,16 @@ public class FirebaseApi implements ApiHelper {
 
     @Override
     public void cancelUpload() {
-        if(uploadTask!=null && uploadTask.isInProgress())
+        if (uploadTask != null && uploadTask.isInProgress())
             uploadTask.cancel();
-        if(pushToDbTask!=null){
+        if (pushToDbTask != null) {
             firebaseDatabase.purgeOutstandingWrites();
         }
     }
 
     @Override
     public void cancelDownload() {
-        if(mListener!=null) {
+        if (mListener != null) {
             databaseReference.child(user.getId()).removeEventListener(mListener);
         }
     }
@@ -126,11 +127,11 @@ public class FirebaseApi implements ApiHelper {
     /**
      * Push the image uri from storage bucket to firebase realtime db
      *
-     * @param image Image object prefilled with name and uri
+     * @param image          Image object prefilled with name and uri
      * @param idlingResource idling resource for espresso
-     * @param user user id, object under which data has to be pushed.
+     * @param user           user id, object under which data has to be pushed.
      */
-    private void pushToFirebaseDb(final Image image, final IdlingResourceApp idlingResource, User user){
+    private void pushToFirebaseDb(final Image image, final IdlingResourceApp idlingResource, User user) {
         DatabaseReference pushReference = databaseReference.child(user.getId()).push();
         pushToDbTask = pushReference.setValue(image);
         pushToDbTask.addOnSuccessListener(new OnSuccessListener() {
@@ -150,4 +151,5 @@ public class FirebaseApi implements ApiHelper {
             }
         });
     }
+
 }

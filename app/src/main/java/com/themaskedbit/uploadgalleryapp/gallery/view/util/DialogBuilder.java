@@ -10,6 +10,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+/*
+ * Class to help build uniform dialog accross
+ */
 public class DialogBuilder {
     private Map<String, AlertDialog> alerts = new HashMap<>();
 

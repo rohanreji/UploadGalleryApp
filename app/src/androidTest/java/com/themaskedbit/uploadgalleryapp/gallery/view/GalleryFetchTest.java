@@ -78,7 +78,7 @@ public class GalleryFetchTest {
         launchActivity();
         onView(allOf(withId(R.id.gallery_rv),isDescendantOfA(allOf(withId(R.id.images_fragment), isDescendantOfA(withId(R.id.layout_gallery)))))).check(doesNotExist());
         onView(withText(R.string.dialog_connect_error)).check(matches(isDisplayed()));
-        onView(withText(R.string.dialog_connect_error_message)).check(matches(isDisplayed()));
+        onView(withText( R.string.dialog_fetch_error_message)).check(matches(isDisplayed()));
     }
 
 

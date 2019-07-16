@@ -11,6 +11,7 @@ public class IdlingResourceApp implements IdlingResource {
     @Nullable
     private volatile ResourceCallback callback;
     private AtomicBoolean isIdle = new AtomicBoolean(true);
+
     @Override
     public String getName() {
         return this.getClass().getName();

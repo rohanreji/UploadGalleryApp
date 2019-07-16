@@ -5,8 +5,6 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
-import java.io.File;
-
 public class SharedPreferencesManagerImpl implements SharedPreferencesManager {
 
     static final String ID_KEY="USER_ID";

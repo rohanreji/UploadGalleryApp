@@ -104,7 +104,7 @@ public class GalleryUploadTest {
         onView(withId(R.id.editor_save)).perform(click());
         onView(allOf(withId(R.id.gallery_rv),isDescendantOfA(allOf(withId(R.id.images_fragment), isDescendantOfA(withId(R.id.layout_gallery)))))).check(doesNotExist());
         onView(withText(R.string.dialog_connect_error)).check(matches(isDisplayed()));
-        onView(withText(R.string.dialog_connect_error_message)).check(matches(isDisplayed()));
+        onView(withText(R.string.dialog_upload_error_message)).check(matches(isDisplayed()));
     }
 
     @Test

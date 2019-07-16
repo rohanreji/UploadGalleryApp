@@ -8,16 +8,17 @@ import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
 
 import java.io.File;
 
-import io.reactivex.Single;
-
 public interface ImageEditFragmentInterface {
 
     void setEditorListener(@Nullable final IdlingResourceApp idlingResource,
-                                EditorListener listener);
+                           EditorListener listener);
 
+    /*
+     * interface for the inteacting with this editor fragment.
+     */
     interface EditorListener {
         void onEditorSaved(@Nullable final IdlingResourceApp idlingResource,
-                                  File file, Bitmap cropping);
+                           File file, Bitmap cropping);
 
         void onEditorClosed();
     }

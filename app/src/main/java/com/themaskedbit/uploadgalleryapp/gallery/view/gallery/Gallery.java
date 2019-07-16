@@ -16,7 +16,7 @@ import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
 
 import java.util.List;
 
-public class Gallery extends Fragment implements GalleryInterface{
+public class Gallery extends Fragment implements GalleryInterface {
     private GalleryAdapter adapter;
 
     @Override
@@ -37,15 +37,12 @@ public class Gallery extends Fragment implements GalleryInterface{
     public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }
+
     @Override
     public void setImages(List<Image> images) {
-        //adapter.setImages(images);
-        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void addImage(Image image) {
-        //adapter.addImage(image);
-        adapter.notifyDataSetChanged();
     }
 }
