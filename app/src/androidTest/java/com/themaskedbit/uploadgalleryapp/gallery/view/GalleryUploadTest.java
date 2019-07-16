@@ -54,6 +54,8 @@ public class GalleryUploadTest {
 
     @Before
     public void stubIntents() {
+
+        TestUser.set("user3");
         intending(not(isInternal())).respondWith(
                 new Instrumentation.ActivityResult(Activity.RESULT_OK, null));
         Instrumentation.ActivityResult resultFromCamera = commonImageResult();
@@ -113,7 +115,6 @@ public class GalleryUploadTest {
         onView(withId(R.id.fab)).perform(click());
         onView(withText(R.string.dialog_upload_message)).check(matches(isDisplayed()));
         onView(withText(R.string.dialog_camera)).perform(click());
-        TestUser.set("user3");
         onView(withId(R.id.editor_save)).check(matches(isDisplayed()));
         onView(withId(R.id.editor_save)).perform(click());
         onView(withId(R.id.layout_gallery)).check(matches(isDisplayed()));
