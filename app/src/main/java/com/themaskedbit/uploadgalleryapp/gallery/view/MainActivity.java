@@ -383,6 +383,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             showStub(false);
         } else {
             showStub(true);
+            if(!isNetworkAvailable(this)){
+                showRefreshButton(true);
+            }
         }
     }
 

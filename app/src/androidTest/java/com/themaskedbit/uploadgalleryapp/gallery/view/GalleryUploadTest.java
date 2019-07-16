@@ -124,6 +124,8 @@ public class GalleryUploadTest {
                 isDescendantOfA(withId(R.id.layout_gallery)))))).check(new RecyclerviewAssertion(equalTo(1)));
     }
 
+
+
     @After
     public void unregisterIdlingResource() {
         if (idlingResource != null) {
