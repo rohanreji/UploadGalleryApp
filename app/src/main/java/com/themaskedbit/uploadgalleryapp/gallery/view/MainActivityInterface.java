@@ -6,7 +6,7 @@ import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
 
 import java.util.List;
 
-//TODO: have methods that will help upload and fetch images, and managing the editor
+//This interface have methods that will help upload and fetch images, and managing the editor
 public interface MainActivityInterface {
     void onFetchImagesStarted();
     void onFetchImageOver();
@@ -16,4 +16,6 @@ public interface MainActivityInterface {
     void onUploadImageError(Exception e);
     void onUploadImageCompleted(Image image);
     void onUploadImageStarted();
+
+    //no need of sub-interface as the activity call the presenter function only for starting fetch. And that is handled by DI.
 }

@@ -66,10 +66,6 @@ public class ViewManagerImpl implements ViewManager {
         view.onFetchImageDone(imageList);
     }
 
-    @Override
-    public void fetchComplete() {
-        view.onFetchImageOver();
-    }
 
 
     @Override

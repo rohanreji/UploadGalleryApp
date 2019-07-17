@@ -314,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         showProgress(true);
     }
 
+    //This can be optimized by sending true/false from the ViewManager
     @Override
     public void onFetchImageDone(List<Image> imageList) {
         showProgress(false);

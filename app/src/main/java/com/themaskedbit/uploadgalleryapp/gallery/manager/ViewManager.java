@@ -17,7 +17,6 @@ public interface ViewManager extends ImageEditFragmentInterface.EditorListener {
     void uploadSuccess(Image image);
     void uploadError(Exception e);
     void fetchDone(List<Image> imageList);
-    void fetchComplete();
     void fetchError(Exception e);
     void stop();
 }

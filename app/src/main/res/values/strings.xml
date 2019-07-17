@@ -17,6 +17,4 @@
     <string name="dialog_connect_error_message">Sorry! Something went wrong</string>
     <string name="dialog_fetch_error_message">Sorry! Something went wrong\\nDownloading Images failed</string>
     <string name="dialog_upload_error_message">Sorry! Something went wrong\\nUploading Images failed</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -70,6 +70,7 @@ public class FirebaseApiSuccessTest {
     Uri uri;
     @Mock
     Object object;
+
     Image image;
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -153,5 +154,7 @@ public class FirebaseApiSuccessTest {
         firebaseApi.downloadImages(idlingResource);
         verify(viewManager).fetchDone(imageList.getImages());
     }
+
+
 
 }

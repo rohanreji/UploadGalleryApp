@@ -15,9 +15,8 @@ The application uses firebase storage for storing images, the URI of the image i
 
 ## Architecture overview
 App follows MVP architecture pattern. The [ViewManagerImpl.java](https://github.com/rohanreji/UploadGalleryApp/blob/master/app/src/main/java/com/themaskedbit/uploadgalleryapp/gallery/manager/ViewManagerImpl.java) is the presenter which interacts between the editor as well as MainActivity and model through interfaces.
-[FirebaseApi.java](https://github.com/rohanreji/UploadGalleryApp/blob/master/app/src/main/java/com/themaskedbit/uploadgalleryapp/gallery/api/FirebaseApi.java) is the Model (repository) to fetch and upload images. Dependency Injection is done using [dagger component](https://github.com/rohanreji/UploadGalleryApp/blob/master/app/src/main/java/com/themaskedbit/uploadgalleryapp/gallery/di/AppModule.java). The editor uses a third party library [SimpleCropView](https://github.com/igreenwood/SimpleCropView).
+[FirebaseApi.java](https://github.com/rohanreji/UploadGalleryApp/blob/master/app/src/main/java/com/themaskedbit/uploadgalleryapp/gallery/api/FirebaseApi.java) is the Model (repository) to fetch and upload images. Dependency Injection is done using [dagger module](https://github.com/rohanreji/UploadGalleryApp/blob/master/app/src/main/java/com/themaskedbit/uploadgalleryapp/gallery/di/AppModule.java). The editor uses a third party library [SimpleCropView](https://github.com/igreenwood/SimpleCropView).
 
 
 ## Thanks
-[Rohan Reji]
-(http://rohanreji.com/)
+[Rohan Reji](http://rohanreji.com/)

@@ -24,7 +24,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         this.imageList = imageList;
         this.picasso = picasso;
         picasso.setLoggingEnabled(true);
-        //TODO: can we reuse ImageList
     }
 
     @Override

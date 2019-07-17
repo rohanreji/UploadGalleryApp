@@ -75,6 +75,8 @@ public class FirebaseApiFailTest {
     ArgumentCaptor<Image> argument;
     @Mock
     User user;
+    @Mock
+    ValueEventListener mockValueEventListener;
 
     @Mock
     UploadTask.TaskSnapshot taskSnapshot;
@@ -174,5 +176,76 @@ public class FirebaseApiFailTest {
         }).when(databaseReference).addValueEventListener(any(ValueEventListener.class));
         firebaseApi.downloadImages(idlingResource);
         verify(viewManager).fetchError(databaseError.toException());
+    }
+
+    @Test
+    public void cancelUploadActivePushTest() {
+        File file;
+        try {
+            file = folder.newFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+            file = null;
+        }
+        when(user.getId()).thenReturn("user1");
+        when(storageReference.child(anyString())).thenReturn(mockImageStorageReference);
+        when(mockImageStorageReference.child(anyString())).thenReturn(mockImageStorageReference);
+        when(mockImageStorageReference.putFile(uri)).thenReturn(uploadTask);
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                ((OnSuccessListener) invocation.getArguments()[0]).onSuccess(taskSnapshot);
+                return null;
+            }
+        }).when(uploadTask).addOnSuccessListener(any(OnSuccessListener.class));
+
+        when(mockImageStorageReference.getDownloadUrl()).thenReturn(mockTask);
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                ((OnSuccessListener) invocation.getArguments()[0]).onSuccess(uri);
+                return null;
+            }
+        }).when(mockTask).addOnSuccessListener(any(OnSuccessListener.class));
+        image = new Image(file.getName(), uri.toString());
+
+        when(databaseReference.child(anyString())).thenReturn(databaseReference);
+        when(databaseReference.push()).thenReturn(pushReference);
+        when(databaseReference.push()).thenReturn(pushReference);
+        when(pushReference.setValue(any(Image.class))).thenReturn(mockPush);
+        firebaseApi.uploadImages(uri, file, idlingResource, "test_image");
+        firebaseApi.cancelUpload();
+        verify(firebaseDatabase).purgeOutstandingWrites();
+    }
+
+    @Test
+    public void cancelUploadActiveUploadTest() {
+        File file;
+        try {
+            file = folder.newFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+            file = null;
+        }
+        when(user.getId()).thenReturn("user1");
+        when(storageReference.child(anyString())).thenReturn(mockImageStorageReference);
+        when(mockImageStorageReference.child(anyString())).thenReturn(mockImageStorageReference);
+        when(mockImageStorageReference.putFile(uri)).thenReturn(uploadTask);
+
+        image = new Image(file.getName(), uri.toString());
+        when(uploadTask.isInProgress()).thenReturn(true);
+        firebaseApi.uploadImages(uri, file, idlingResource, "test_image");
+        firebaseApi.cancelUpload();
+        verify(uploadTask).cancel();
+    }
+
+    @Test
+    public void cancelDownloadImagesTest() {
+        when(user.getId()).thenReturn("user1");
+        when(databaseReference.child(anyString())).thenReturn(pushReference);
+        when(pushReference.addValueEventListener(any(ValueEventListener.class))).thenReturn(mockValueEventListener);
+        firebaseApi.downloadImages(idlingResource);
+        firebaseApi.cancelDownload();
+        verify(pushReference).removeEventListener(mockValueEventListener);
     }
 }
