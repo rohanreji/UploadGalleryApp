@@ -34,6 +34,7 @@ import com.themaskedbit.uploadgalleryapp.gallery.helper.FileHelper;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.SharedPreferencesManager;
 import com.themaskedbit.uploadgalleryapp.gallery.manager.ViewManager;
 import com.themaskedbit.uploadgalleryapp.gallery.model.Image;
+import com.themaskedbit.uploadgalleryapp.gallery.model.User;
 import com.themaskedbit.uploadgalleryapp.gallery.test.IdlingResourceApp;
 import com.themaskedbit.uploadgalleryapp.gallery.view.editor.ImageEditFragment;
 import com.themaskedbit.uploadgalleryapp.gallery.view.gallery.Gallery;
@@ -81,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Inject
     GalleryAdapter galleryAdapter;
+
+    @Inject
+    User user;
 
 
     @Nullable
@@ -424,8 +428,14 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
      * Helper method to get internet status
      */
     public boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+
+        //this is the user validation logic. Right now using plain validation.
+        if(user.getId().equals(""))
+            return false;
+        else {
+            ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+            return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+        }
     }
 
     public void refresh() {

@@ -1,5 +1,6 @@
 package com.themaskedbit.uploadgalleryapp.gallery.view;
 
+import android.app.Activity;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -18,8 +19,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+
+import javax.inject.Inject;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
@@ -27,10 +32,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.AllOf.allOf;
 
 @RunWith(AndroidJUnit4.class)
 public class GalleryFetchTest {
+
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule<>(
@@ -65,6 +72,7 @@ public class GalleryFetchTest {
     public void testEmptyGallery() {
         TestUser.set("user3");
         launchActivity();
+
         onView(allOf(withId(R.id.tvStub), isDescendantOfA(allOf(withId(R.id.layout_gallery))))).check(matches(isDisplayed()));
     }
 
@@ -77,6 +85,34 @@ public class GalleryFetchTest {
         onView(withText(R.string.dialog_fetch_error_message)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void testFetchNoNet() {
+        TestUser.set("");
+        launchActivity();
+        onView(withId(R.id.refresh_button)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void testFetchNoNetRefreshFail() {
+        TestUser.set("");
+        launchActivity();
+        onView(withId(R.id.refresh_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.refresh_button)).perform(click());
+        onView(withId(R.id.refresh_button)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void testFetchNoNetRefreshSuccess() {
+        TestUser.set("");
+        launchActivity();
+        onView(withId(R.id.refresh_button)).check(matches(isDisplayed()));
+        TestUser.set("user2");
+        onView(withId(R.id.refresh_button)).perform(click());
+        onView(withId(R.id.refresh_button)).check(matches(not(isDisplayed())));
+        onView(allOf(withId(R.id.gallery_rv), isDescendantOfA(allOf(withId(R.id.images_fragment), isDescendantOfA(withId(R.id.layout_gallery)))))).check(matches(isDisplayed()));
+        onView(allOf(withId(R.id.gallery_rv), isDescendantOfA(allOf(withId(R.id.images_fragment), isDescendantOfA(withId(R.id.layout_gallery)))))).check(new RecyclerviewAssertion(equalTo(2)));
+
+    }
 
     private void launchActivity() {
         mActivityRule.launchActivity(null);

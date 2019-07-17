@@ -84,6 +84,7 @@ public class FirebaseApi implements ApiHelper {
 
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                imageList.clear();
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
 
                     Image image = postSnapshot.getValue(Image.class);

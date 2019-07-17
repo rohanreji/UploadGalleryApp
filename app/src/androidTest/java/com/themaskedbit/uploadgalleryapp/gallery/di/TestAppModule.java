@@ -1,5 +1,7 @@
 package com.themaskedbit.uploadgalleryapp.gallery.di;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DatabaseReference;
